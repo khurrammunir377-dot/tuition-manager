@@ -48,3 +48,6 @@ app.*.map.json
 *.apk
 TuitionManager.apk
 landing/*.apk
+
+*.pdf
+
