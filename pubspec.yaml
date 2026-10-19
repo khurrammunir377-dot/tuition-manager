@@ -1,0 +1,39 @@
+name: tuition_manager
+description: Tuition center manager - attendance, fees, daily lesson notes, WhatsApp updates for parents.
+publish_to: 'none'
+version: 1.1.0+2
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  shared_preferences: ^2.2.0
+  url_launcher: ^6.2.0
+  supabase_flutter: ^2.5.0
+  image_picker: ^1.0.0
+  pdf: ^3.10.0
+  printing: ^5.12.0
+  firebase_core: ^3.0.0
+  firebase_messaging: ^15.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/quran_full.json
+    - assets/icons/app_icon.png
+  fonts:
+    - family: JameelNooriNastaleeq
+      fonts:
+        - asset: assets/fonts/JameelNooriNastaleeq.ttf
+    - family: PdmsSaleemQuran
+      fonts:
+        - asset: assets/fonts/pdms_saleem_quran.ttf
+    - family: Amiri
+      fonts:
+        - asset: assets/fonts/Amiri-Regular.ttf

@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ٹیوشن و آن لائن قرآن مینیجر | اکیڈمیز، ہوم ٹیوٹرز اور آن لائن اساتذہ کی #1 ایپ</title>
+  <meta name="description" content="پاکستان اور دنیا بھر کے اکیڈمیز، ہوم ٹیوٹرز اور آن لائن قرآن اکیڈمیز کے لیے جدید ترین ایپ۔ حاضری، فیس رسیدیں، ٹیسٹ، زوم کلاسز اور قرآن پاک ٹریکر۔">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Noto+Sans+Arabic:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#0F7B5F',
+            },
+            gold: {
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+            }
+          },
+          fontFamily: {
+            arabic: ['"Noto Sans Arabic"', 'system-ui', 'sans-serif'],
+            urdu: ['"Noto Nastaliq Urdu"', 'serif'],
+            latin: ['"Plus Jakarta Sans"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Noto Sans Arabic', sans-serif;
+    }
+    .urdu-title {
+      font-family: 'Noto Nastaliq Urdu', 'Noto Sans Arabic', serif;
+      line-height: 1.8;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    .gradient-hero {
+      background: radial-gradient(circle at top right, #ecfdf5 0%, #f0fdf4 35%, #ffffff 100%);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- Navigation -->
+  <header class="sticky top-0 z-50 glass-card shadow-sm border-b border-slate-200/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-xl bg-brand-900 text-white flex items-center justify-center shadow-lg shadow-brand-900/20">
+          <i data-lucide="book-open" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <span class="text-xl font-black text-brand-900 block leading-tight">ٹیوشن مینیجر</span>
+          <span class="text-xs font-semibold text-slate-500 block">اکیڈمی و آن لائن قرآن پورٹل</span>
+        </div>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
+        <a href="#features" class="hover:text-brand-700 transition">اہم خصوصیات</a>
+        <a href="#quran" class="hover:text-brand-700 transition">آن لائن قرآن ٹریکر</a>
+        <a href="#portals" class="hover:text-brand-700 transition">طلبہ و والدین پورٹل</a>
+        <a href="#faq" class="hover:text-brand-700 transition">اکثر پوچھے گئے سوالات</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <a href="TuitionManager.apk" download class="inline-flex items-center gap-2 bg-brand-900 hover:bg-brand-800 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-md shadow-brand-900/20 hover:shadow-lg transition transform hover:-translate-y-0.5">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          <span>ڈاؤن لوڈ APK (v1.0)</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="gradient-hero pt-14 pb-20 overflow-hidden relative border-b border-slate-200/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- Hero Text -->
+        <div class="lg:col-span-7 text-center lg:text-right">
+          <div class="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 text-xs sm:text-sm font-bold px-3.5 py-1.5 rounded-full mb-6 border border-emerald-200">
+            <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+            پاکستان اور دنیا بھر کے ٹیوٹرز کی پسندیدہ ایپ
+          </div>
+
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 leading-tight lg:leading-tight mb-6">
+            ٹیوشن اکیڈمی اور <span class="text-brand-900 underline decoration-gold-500 decoration-4 underline-offset-8">آن لائن قرآن پاک</span> کا جدید ترین پورٹل
+          </h1>
+
+          <p class="text-base sm:text-lg text-slate-600 leading-relaxed mb-8 max-w-2xl mx-auto lg:mx-0">
+            طلبہ کا مکمل ریکارڈ، روزانہ حاضری، فیس کی فوری رسیدیں، زوم کلاس لنکس اور حفظ و ناظرہ کے لیے (سبق، سبقی، منزل) ٹریکر — طلبہ اور والدین کے لائیو پورٹل کے ساتھ!
+          </p>
+
+          <!-- Download Action Bar -->
+          <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-8">
+            <a href="TuitionManager.apk" download onclick="trackDownload('TuitionManager')" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-brand-900 hover:bg-brand-800 text-white px-7 py-4 rounded-2xl font-black text-base shadow-xl shadow-brand-900/25 hover:shadow-2xl transition transform hover:-translate-y-0.5">
+              <i data-lucide="download-cloud" class="w-6 h-6"></i>
+              <div class="text-right">
+                <span class="block text-xs text-emerald-200 font-normal">براہِ راست انسٹال کریں · <span id="count-TuitionManager" class="font-bold text-white">...</span> ڈاؤن لوڈز</span>
+                <span class="block text-base">ڈاؤن لوڈ اینڈرائیڈ APK (65 MB)</span>
+              </div>
+            </a>
+
+            <div class="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-slate-900 text-slate-300 px-6 py-3.5 rounded-2xl font-bold text-sm border border-slate-800 shadow-md">
+              <i data-lucide="play" class="w-5 h-5 text-emerald-400"></i>
+              <div class="text-right">
+                <span class="block text-xs text-slate-400 font-normal">گوگل پلے سٹور</span>
+                <span class="block text-sm text-white">Play Store (جلد دستیاب ہے)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trust Badges -->
+          <div class="flex flex-wrap items-center justify-center lg:justify-start gap-6 pt-4 text-xs font-semibold text-slate-500">
+            <div class="flex items-center gap-2">
+              <i data-lucide="wifi-off" class="w-4 h-4 text-brand-700"></i>
+              <span>بغیر انٹرنیٹ بھی مکمل کام کرتی ہے</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="shield-check" class="w-4 h-4 text-brand-700"></i>
+              <span>ڈیٹا 100% محفوظ و پرائیویٹ</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="message-circle" class="w-4 h-4 text-brand-700"></i>
+              <span>ایک کلک پر واٹس ایپ اپڈیٹس</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phone Mockup Preview -->
+        <div class="lg:col-span-5 relative flex justify-center">
+          <div class="relative w-72 sm:w-80 rounded-[40px] bg-slate-950 p-3 shadow-2xl shadow-brand-900/30 border-4 border-slate-800">
+            <!-- Screen Header Notch -->
+            <div class="absolute top-6 left-1/2 -translate-x-1/2 w-28 h-4 bg-slate-800 rounded-full z-20"></div>
+
+            <!-- Screen Content -->
+            <div class="bg-white rounded-[32px] overflow-hidden pt-8 pb-6 px-4 text-right">
+              
+              <!-- App Bar -->
+              <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-lg bg-brand-900 text-white flex items-center justify-center text-xs">
+                    <i data-lucide="book-open" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <div class="text-xs font-black text-slate-900">اقراء اکیڈمی</div>
+                    <div class="text-[10px] text-emerald-700 font-bold">18 طلبہ اندراج شدہ</div>
+                  </div>
+                </div>
+                <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 text-xs">
+                  <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+                </div>
+              </div>
+
+              <!-- Live Quran Sabaq Card -->
+              <div class="mt-3 bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-right">
+                <div class="flex items-center justify-between mb-1.5">
+                  <span class="text-[10px] font-extrabold bg-brand-900 text-white px-2 py-0.5 rounded-full">ممتاز ⭐⭐⭐</span>
+                  <span class="text-xs font-bold text-brand-900 flex items-center gap-1">
+                    <i data-lucide="book-marked" class="w-3.5 h-3.5"></i> قرآن ڈائری: عثمان
+                  </span>
+                </div>
+                <div class="text-[11px] text-slate-700 font-semibold space-y-0.5">
+                  <div>📖 پارہ 3 | سورۃ آل عمران</div>
+                  <div>📝 سبق: آیات 1 تا 15</div>
+                  <div>🔁 سبقی: پچھلے 4 صفحات | منزل: پارہ 2</div>
+                </div>
+              </div>
+
+              <!-- Online Class Join Banner -->
+              <div class="mt-2.5 bg-indigo-50 border border-indigo-200 rounded-xl p-2.5 flex items-center justify-between">
+                <div class="text-right">
+                  <div class="text-xs font-bold text-indigo-950 flex items-center gap-1">
+                    <i data-lucide="video" class="w-3 h-3 text-indigo-600"></i> لائیو آن لائن کلاس
+                  </div>
+                  <div class="text-[10px] text-slate-500">زوم / گوگل میٹ لنک تیار ہے</div>
+                </div>
+                <span class="bg-indigo-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg">شامل ہوں</span>
+              </div>
+
+              <!-- Student Sample Item -->
+              <div class="mt-3 bg-slate-50 border border-slate-200 rounded-xl p-2.5">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">فیس ادا ✅</span>
+                  <span class="text-xs font-bold text-slate-900">محمد احمد (نویں جماعت)</span>
+                </div>
+                <div class="text-[10px] text-slate-500 mt-1 flex justify-between items-center">
+                  <span>فیس: 2,500 روپے</span>
+                  <span class="font-mono bg-slate-200 px-1.5 rounded">کوڈ: m7x8q4b2</span>
+                </div>
+              </div>
+
+              <!-- Bottom CTA inside phone -->
+              <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-around text-slate-400 text-[10px]">
+                <div class="text-brand-900 font-bold flex flex-col items-center">
+                  <i data-lucide="users" class="w-4 h-4 mb-0.5"></i> طلبہ
+                </div>
+                <div class="flex flex-col items-center">
+                  <i data-lucide="check-square" class="w-4 h-4 mb-0.5"></i> حاضری
+                </div>
+                <div class="flex flex-col items-center">
+                  <i data-lucide="credit-card" class="w-4 h-4 mb-0.5"></i> فیس
+                </div>
+                <div class="flex flex-col items-center">
+                  <i data-lucide="message-square" class="w-4 h-4 mb-0.5"></i> پیغامات
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 Specialized Pillars -->
+  <section id="features" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-xs font-black text-brand-900 uppercase tracking-widest mb-3">ہر قسم کی تدریس کے لیے مکمل حل</h2>
+        <p class="text-3xl font-black text-slate-900">ایک ہی ایپ میں آپ کے تمام ٹیوشن اور اکیڈمی امور آسان</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- Pillar 1: Academies -->
+        <div class="p-8 rounded-3xl bg-slate-50 border border-slate-200 hover:shadow-xl transition group hover:-translate-y-1">
+          <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-brand-900 flex items-center justify-center mb-6 group-hover:scale-110 transition">
+            <i data-lucide="school" class="w-7 h-7"></i>
+          </div>
+          <h3 class="text-xl font-black text-slate-900 mb-3">اکیڈمی و کوچنگ سینٹرز</h3>
+          <p class="text-sm text-slate-600 leading-relaxed mb-6">
+            تمام کلاسیں، بیجز، مضامین اور اوقات الگ الگ ترتیب دیں۔ ہر طالب علم کی یومیہ حاضری لگائیں اور فیس کے واجبات کا مکمل حساب رکھیں۔
+          </p>
+          <ul class="text-xs font-semibold text-slate-700 space-y-2">
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> بیچ ٹائمنگ اور کلاس وائز فلٹرز</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> آمدن اور اخراجات (لیجر کھاتہ)</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> ہفتہ وار اور ماہانہ ٹیسٹ مارکس</li>
+          </ul>
+        </div>
+
+        <!-- Pillar 2: Online Quran Academy -->
+        <div id="quran" class="p-8 rounded-3xl bg-emerald-50/70 border-2 border-emerald-500/40 hover:shadow-xl transition group hover:-translate-y-1 relative">
+          <div class="absolute -top-3 right-6 bg-gold-500 text-slate-900 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
+            خصوصی فیچر
+          </div>
+          <div class="w-14 h-14 rounded-2xl bg-brand-900 text-white flex items-center justify-center mb-6 group-hover:scale-110 transition">
+            <i data-lucide="book-open-check" class="w-7 h-7"></i>
+          </div>
+          <h3 class="text-xl font-black text-slate-900 mb-3">آن لائن قرآن پاک اکیڈمی</h3>
+          <p class="text-sm text-slate-600 leading-relaxed mb-6">
+            دنیا بھر کے قرآن اساتذہ کے لیے بنایا گیا خصوصی ٹریکر۔ نورانی قاعدہ، ناظرہ، اور حفظ القرآن کا روزانہ مکمل ریکارڈ والدین کو بھیجیں۔
+          </p>
+          <ul class="text-xs font-semibold text-slate-700 space-y-2">
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> پارہ، سورۃ، سبق، سبقی اور منزل لاگر</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> ممتاز، بہت اچھا اور کارکردگی گریڈز</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> ایک کلک پر زوم اور گوگل میٹ جوائننگ</li>
+          </ul>
+        </div>
+
+        <!-- Pillar 3: Home & Online Tutors -->
+        <div class="p-8 rounded-3xl bg-slate-50 border border-slate-200 hover:shadow-xl transition group hover:-translate-y-1">
+          <div class="w-14 h-14 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center mb-6 group-hover:scale-110 transition">
+            <i data-lucide="globe" class="w-7 h-7"></i>
+          </div>
+          <h3 class="text-xl font-black text-slate-900 mb-3">گلوبل اور ہوم ٹیوٹرز</h3>
+          <p class="text-sm text-slate-600 leading-relaxed mb-6">
+            چاہے آپ پاکستان میں پڑھاتے ہوں یا UK، امریکہ، کینیڈا اور گلف میں اوورسیز طلبہ کو — ڈالرز اور پاؤنڈز میں فیس وصول کریں!
+          </p>
+          <ul class="text-xs font-semibold text-slate-700 space-y-2">
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> ملٹی کرنسی: PKR, USD, GBP, AED, SAR</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> واٹس ایپ پر تصویری فیس رسیدیں</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> بھائی بہن فیس رعایت کا خودکار حساب</li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Portals Breakdown (Teacher, Parent, Student) -->
+  <section id="portals" class="py-20 bg-slate-100/70 border-y border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-xs font-black text-brand-900 uppercase tracking-widest mb-3">تین مخصوص پورٹلز ایک ہی ایپ میں</h2>
+        <p class="text-3xl font-black text-slate-900">ٹیچر، والدین اور طالب علم کا اپنا ڈیش بورڈ</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm text-right">
+          <div class="inline-block p-3 rounded-2xl bg-emerald-100 text-brand-900 mb-4 font-bold">
+            👨‍🏫 ٹیچر و اکیڈمی ایڈمن
+          </div>
+          <h4 class="text-lg font-black text-slate-900 mb-2">مکمل کنٹرول</h4>
+          <p class="text-xs text-slate-600 leading-relaxed mb-4">
+            طلبہ کا اندراج، یومیہ حاضری، ہوم ورک تصاویر کا اپلوڈ، واٹس ایپ قطار اور فیس کا باقاعدہ لیجر۔
+          </p>
+          <div class="text-xs text-emerald-700 font-bold bg-emerald-50 px-3 py-2 rounded-xl">
+            ✓ ہر طالب علم کا 8 حرفی منفرد کوڈ تیار ہوتا ہے
+          </div>
+        </div>
+
+        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm text-right">
+          <div class="inline-block p-3 rounded-2xl bg-indigo-100 text-indigo-700 mb-4 font-bold">
+            👨‍👩‍👧 والدین پورٹل (Parent Portal)
+          </div>
+          <h4 class="text-lg font-black text-slate-900 mb-2">لائیو آگاہی</h4>
+          <p class="text-xs text-slate-600 leading-relaxed mb-4">
+            والدین کو اکاؤنٹ بنانے کی کوئی ضرورت نہیں۔ صرف بچے کا 8 حرفی کوڈ ڈال کر بچے کی لائیو حاضری اور فیس سٹیٹس دیکھ سکتے ہیں۔
+          </p>
+          <div class="text-xs text-indigo-700 font-bold bg-indigo-50 px-3 py-2 rounded-xl">
+            ✓ ایک ہی فون میں کئی بچوں کے کوڈز سوئچ کریں
+          </div>
+        </div>
+
+        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm text-right">
+          <div class="inline-block p-3 rounded-2xl bg-teal-100 text-teal-800 mb-4 font-bold">
+            🎓 طالب علم پورٹل (Student Portal)
+          </div>
+          <h4 class="text-lg font-black text-slate-900 mb-2">کلاس ڈائری و زوم لنکس</h4>
+          <p class="text-xs text-slate-600 leading-relaxed mb-4">
+            طالب علم اپنا کوڈ ڈال کر آج کا سبق، ہوم ورک تصویر، قرآن سبق، ٹیسٹ مارکس اور ایک کلک پر آن لائن کلاس جوائن کر سکتا ہے۔
+          </p>
+          <div class="text-xs text-teal-800 font-bold bg-teal-50 px-3 py-2 rounded-xl">
+            ✓ استاد سے سوالات پوچھنے کی سہولت
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- How to Install / Setup Guide -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <h2 class="text-xs font-black text-brand-900 uppercase tracking-widest mb-3">آسان اور تیز</h2>
+        <p class="text-3xl font-black text-slate-900">صرف 3 منٹ میں اپنے موبائل پر شروع کریں</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-right">
+        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200">
+          <div class="text-3xl font-black text-brand-900 mb-2">01</div>
+          <h4 class="text-lg font-bold text-slate-900 mb-2">APK ڈاؤن لوڈ اور انسٹال کریں</h4>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            نیچے دیے گئے ڈاؤن لوڈ بٹن پر کلک کر کے TuitionManager.apk فائل ڈاؤن لوڈ کریں اور "Install from this source" کو اجازت دیں۔
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200">
+          <div class="text-3xl font-black text-brand-900 mb-2">02</div>
+          <h4 class="text-lg font-bold text-slate-900 mb-2">طالب علم شامل کریں</h4>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            "میں ٹیچر ہوں" پر ٹیپ کریں اور نیچے دیے گئے "طالب علم شامل کریں" کے بٹن سے بچے کا نام، واٹس ایپ اور فیس درج کریں۔
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200">
+          <div class="text-3xl font-black text-brand-900 mb-2">03</div>
+          <h4 class="text-lg font-bold text-slate-900 mb-2">والدین کو کوڈ فراہم کریں</h4>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            ایک کلک پر واٹس ایپ سے بچے کا 8 حرفی کوڈ بھیجیں۔ والدین اور بچے اپنے فون پر لائیو حاضری اور سبق دیکھ سکیں گے۔
+          </p>
+        </div>
+      </div>
+
+      <!-- Prominent Download CTA -->
+      <div class="mt-16 bg-gradient-to-r from-brand-900 via-emerald-800 to-brand-900 rounded-3xl p-8 sm:p-12 text-center text-white shadow-2xl relative overflow-hidden">
+        <div class="max-w-2xl mx-auto relative z-10">
+          <h3 class="text-2xl sm:text-3xl font-black mb-4">آج ہی اپنے ٹیوشن سنٹر کو ڈیجیٹل اور پروفیشنل بنائیں!</h3>
+          <p class="text-sm text-emerald-100 mb-8">کوئی لمبا سیٹ اپ نہیں۔ مفت ڈاؤن لوڈ کریں اور فوری استعمال شروع کریں۔</p>
+          
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="TuitionManager.apk" download onclick="trackDownload('TuitionManager')" class="inline-flex items-center gap-3 bg-white text-brand-900 hover:bg-emerald-50 px-8 py-4 rounded-2xl font-black text-base shadow-lg transition transform hover:-translate-y-0.5">
+              <i data-lucide="download" class="w-5 h-5"></i>
+              <span>ڈاؤن لوڈ اینڈرائیڈ APK (v1.1)</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- More Apps Section -->
+  <section id="other-apps" class="py-20 bg-slate-900 text-white border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-900/60 border border-brand-500/30 text-emerald-300 text-xs font-bold mb-4">
+          <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+          <span>ہماری دیگر مقبول ایپس</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-black text-white urdu-title">
+          دیگر طاقتور ایپس برائے اینڈرائیڈ
+        </h2>
+        <p class="text-slate-400 text-sm max-w-xl mx-auto mt-2">
+          روزمرہ کی آسانی، اسلامی رہنمائی اور سوشل میڈیا ڈاؤن لوڈنگ کے لیے تیار کردہ معیاری ایپس
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <!-- App 1: KMB Downloader -->
+        <div class="bg-slate-800/80 rounded-3xl p-7 border border-slate-700/80 hover:border-emerald-500/50 shadow-xl transition flex flex-col justify-between text-right">
+          <div>
+            <div class="flex items-center justify-between mb-5">
+              <span class="text-xs px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 font-bold">ورژن 3.3.0 · جدید</span>
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/25">
+                <i data-lucide="video" class="w-7 h-7 text-white"></i>
+              </div>
+            </div>
+            <h3 class="text-xl font-black text-white mb-2">KMB Video & Media Downloader</h3>
+            <p class="text-xs text-slate-300 leading-relaxed mb-6">
+              فیس بک، انسٹاگرام، ٹک ٹاک اور دیگر تمام سوشل میڈیا پلیٹ فارمز سے تیز ترین ویڈیو اور آڈیو ڈاؤن لوڈنگ کے لیے خصوصی اینڈرائیڈ ایپ۔
+            </p>
+          </div>
+          <div class="pt-4 border-t border-slate-700/60 flex items-center justify-between">
+            <span class="text-xs text-slate-400">ڈاؤن لوڈز: <strong id="count-KMB_Downloader" class="text-white">...</strong></span>
+            <a href="KMB_Downloader.apk" download onclick="trackDownload('KMB_Downloader')" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl font-bold text-xs transition shadow-md shadow-blue-600/30">
+              <i data-lucide="download" class="w-4 h-4"></i>
+              <span>ڈاؤن لوڈ APK (210 MB)</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- App 2: Qalbi Islamic App -->
+        <div class="bg-slate-800/80 rounded-3xl p-7 border border-slate-700/80 hover:border-emerald-500/50 shadow-xl transition flex flex-col justify-between text-right">
+          <div>
+            <div class="flex items-center justify-between mb-5">
+              <span class="text-xs px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">اسلامک پرو ایپ</span>
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/25">
+                <i data-lucide="compass" class="w-7 h-7 text-white"></i>
+              </div>
+            </div>
+            <h3 class="text-xl font-black text-white mb-2">Qalbi (قلبی) - Islamic Companion</h3>
+            <p class="text-xs text-slate-300 leading-relaxed mb-6">
+              نماز کے اوقات، قبلہ رخ، تسبیح کاؤنٹر، دعائیں اور مکمل قرآن مجید کا پاکیزہ اور خوبصورت ڈیجیٹل ساتھی۔
+            </p>
+          </div>
+          <div class="pt-4 border-t border-slate-700/60 flex items-center justify-between">
+            <span class="text-xs text-slate-400">ڈاؤن لوڈز: <strong id="count-Qalbi_Islamic" class="text-white">...</strong></span>
+            <a href="Qalbi_Islamic.apk" download onclick="trackDownload('Qalbi_Islamic')" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-bold text-xs transition shadow-md shadow-emerald-600/30">
+              <i data-lucide="download" class="w-4 h-4"></i>
+              <span>ڈاؤن لوڈ APK (60 MB)</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="py-20 bg-slate-50 border-t border-slate-200">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-xs font-black text-brand-900 uppercase tracking-widest mb-2">اکثر پوچھے گئے سوالات</h2>
+        <p class="text-2xl font-black text-slate-900">آپ کے سوالات کے جوابات</p>
+      </div>
+
+      <div class="space-y-4 text-right">
+        <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+          <h4 class="text-base font-bold text-slate-900 mb-2">کیا یہ ایپ انٹرنیٹ کے بغیر (آف لائن) کام کرتی ہے؟</h4>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            جی ہاں! استاد کا تمام ڈیٹا مکمل طور پر ان کے اپنے موبائل میں محفوظ رہتا ہے۔ آپ بغیر انٹرنیٹ کے طلبہ شامل کر سکتے ہیں، حاضری اور فیس لگا سکتے ہیں۔ جب انٹرنیٹ آن ہوگا اور آپ لاگ اِن کریں گے تو ڈیٹا خود بخود والدین کے لیے سنک ہو جائے گا۔
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+          <h4 class="text-base font-bold text-slate-900 mb-2">کیا والدین کو اکاؤنٹ بنانا یا لاگ اِن کرنا پڑے گا؟</h4>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            بالکل نہیں! والدین اور طلبہ کے لیے نظام انتہائی سادہ ہے۔ وہ صرف استاد کی طرف سے دیا گیا 8 حرفی کوڈ درج کرتے ہیں اور فوری طور پر اپنے بچے کا لائیو پورٹل دیکھ لیتے ہیں۔
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+          <h4 class="text-base font-bold text-slate-900 mb-2">آن لائن قرآن اکیڈمی کا فیچر کیسے کام کرتا ہے؟</h4>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            طالب علم بناتے وقت آپ "نورانی قاعدہ"، "ناظرہ" یا "حفظ القرآن" چن سکتے ہیں اور ان کا زوم یا گوگل میٹ لنک ڈال سکتے ہیں۔ طالب علم ایپ کے اندر سے ڈائریکٹ کلاس جوائن کر سکتا ہے اور استاد روزانہ (پارہ، سورۃ، سبق، سبقی، منزل) لاگ کر کے واٹس ایپ پر بھیج سکتا ہے۔
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+          <h4 class="text-base font-bold text-slate-900 mb-2">گوگل پلے سٹور پر یہ کب آئے گی؟</h4>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            ابھی یہ ورژن ٹیسٹنگ اور فیڈبیک کے لیے براہِ راست APK کے طور پر ڈاؤن لوڈ کے لیے دستیاب ہے۔ جلد ہی ایپ کو مکمل فیچرز کے ساتھ گوگل پلے سٹور پر بھی پبلش کر دیا جائے گا۔
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-800 text-right">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-slate-800">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-brand-900 text-white flex items-center justify-center">
+            <i data-lucide="book-open" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <span class="text-lg font-bold text-white block">ٹیوشن و آن لائن قرآن مینیجر</span>
+            <span class="text-xs text-slate-500">پاکستان اور دنیا بھر کے اساتذہ کے لیے</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <a href="TuitionManager.apk" download onclick="trackDownload('TuitionManager')" class="text-xs bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-xl border border-slate-800 flex items-center gap-2">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>ڈاؤن لوڈ اینڈرائیڈ APK</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="pt-8 text-center text-xs text-slate-500">
+        © 2026 ٹیوشن مینیجر ایپ۔ جملہ حقوق محفوظ ہیں۔
+      </div>
+    </div>
+  </footer>
+
+  <!-- Supabase Analytics & Download Counter Script -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Supabase Credentials (Auto Tracking)
+    const SUPABASE_URL = 'https://gxlwsrrdcbecqcaiwufm.supabase.co';
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd4bHdzcnJkY2JlY3FjYWl3dWZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5NzA0MzQsImV4cCI6MjA5ODU0NjQzNH0.ABH9WyW3OAC0cynj4qMy1iAEb2qJJFZGzNlTED6zG2A';
+    const _sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
+
+    // Track Download on Click
+    async function trackDownload(appName) {
+      try {
+        if (!_sb) return;
+        // Insert a download event
+        await _sb.from('app_downloads').insert({
+          app_name: appName,
+          referrer: document.referrer || 'direct',
+          user_agent: navigator.userAgent || 'unknown',
+          created_at: new Date().toISOString()
+        });
+        // Optimistically increment display
+        const el = document.getElementById('count-' + appName);
+        if (el) {
+          const cur = parseInt(el.innerText.replace(/\D/g, '')) || 0;
+          el.innerText = (cur + 1).toLocaleString();
+        }
+      } catch (e) {
+        console.warn('Track error:', e);
+      }
+    }
+
+    // Load Live Download Counts
+    async function loadDownloadCounts() {
+      if (!_sb) return;
+      const apps = ['TuitionManager', 'KMB_Downloader', 'Qalbi_Islamic'];
+      for (const app of apps) {
+        try {
+          const { count, error } = await _sb
+            .from('app_downloads')
+            .select('*', { count: 'exact', head: true })
+            .eq('app_name', app);
+
+          const el = document.getElementById('count-' + app);
+          if (el) {
+            const baseCount = app === 'TuitionManager' ? 42 : (app === 'KMB_Downloader' ? 128 : 85);
+            const total = (count || 0) + baseCount;
+            el.innerText = total.toLocaleString();
+          }
+        } catch (_) {}
+      }
+    }
+
+    // Load counts on page load
+    window.addEventListener('DOMContentLoaded', loadDownloadCounts);
+  </script>
+</body>
+</html>
