@@ -49,6 +49,7 @@ class Student {
   final String meetingLink;
   final String courseType; // 'school', 'quran_qaida', 'quran_nazra', 'quran_hifz', 'quran_tarjuma', 'general_online'
   final Map<String, dynamic>? quran;
+  final String timing; // e.g. '4:00 PM - 6:00 PM'
 
   Student(
     this.id,
@@ -62,6 +63,7 @@ class Student {
     this.meetingLink = '',
     this.courseType = 'school',
     this.quran,
+    this.timing = '',
   });
 
   String get currencySymbol {
@@ -110,6 +112,7 @@ class Student {
     String? meetingLink,
     String? courseType,
     Map<String, dynamic>? quran,
+    String? timing,
   }) =>
       Student(
         id,
@@ -123,6 +126,7 @@ class Student {
         meetingLink: meetingLink ?? this.meetingLink,
         courseType: courseType ?? this.courseType,
         quran: quran ?? this.quran,
+        timing: timing ?? this.timing,
       );
 
   Map<String, dynamic> toJson() => {
@@ -137,6 +141,7 @@ class Student {
         'meetingLink': meetingLink,
         'courseType': courseType,
         'quran': quran,
+        'timing': timing,
       };
 
   factory Student.fromJson(Map<String, dynamic> j) => Student(
@@ -151,6 +156,7 @@ class Student {
         meetingLink: j['meetingLink'] ?? '',
         courseType: j['courseType'] ?? 'school',
         quran: j['quran'] != null ? Map<String, dynamic>.from(j['quran']) : null,
+        timing: j['timing'] ?? '',
       );
 }
 
@@ -270,7 +276,25 @@ class Store extends ChangeNotifier {
   bool get _loggedIn =>
       Cfg.ready && Supabase.instance.client.auth.currentUser != null;
 
+  Future<void> publishSnapshots() async {
+    if (!Cfg.ready || students.isEmpty) return;
+    try {
+      final c = Supabase.instance.client;
+      await c.from('snapshots').upsert(
+        students.map((s) => {
+          'code': s.code.toLowerCase().trim(),
+          'student_id': s.id,
+          'center': center,
+          'data': snapshot(s),
+          'updated_at': DateTime.now().toUtc().toIso8601String(),
+        }).toList(),
+        onConflict: 'code',
+      );
+    } catch (_) {}
+  }
+
   void _autoSync() {
+    publishSnapshots();
     if (!_loggedIn) return;
     _timer?.cancel();
     _timer = Timer(const Duration(seconds: 3), () async {
@@ -305,6 +329,7 @@ class Store extends ChangeNotifier {
     String meetingLink = '',
     String courseType = 'school',
     Map<String, dynamic>? quran,
+    String timing = '',
   }) {
     students.add(Student(
       's${DateTime.now().microsecondsSinceEpoch}',
@@ -318,6 +343,7 @@ class Store extends ChangeNotifier {
       meetingLink: meetingLink,
       courseType: courseType,
       quran: quran,
+      timing: timing,
     ));
     _save();
   }
@@ -448,34 +474,48 @@ class Store extends ChangeNotifier {
   String message(Student s) {
     final a = attToday(s.id);
     final status = a == true
-        ? 'حاضر تھا/تھی ✅'
+        ? 'حاضر ✅'
         : a == false
-            ? 'غیر حاضر تھا/تھی ❌'
-            : '-';
+            ? 'غیر حاضر ❌'
+            : 'غیر معین';
     final note = notes[today];
     final fee = isPaid(s.id)
-        ? 'ادا ہو چکی ✅'
-        : 'باقی ہے - ${remaining(s.id)} ${s.currencySymbol}';
-    var t = 'السلام علیکم! $center\n${s.name} آج $status\n';
+        ? 'مکمل ادا شدہ ✅'
+        : 'باقی: ${remaining(s.id)} ${s.currencySymbol}';
+    
+    var t = 'السلام علیکم ورحمۃ اللہ!\n';
+    t += '🏫 *$center*\n\n';
+    t += 'محترم والدین، طالب علم *${s.name}* کی روزانہ تعلیمی رپورٹ:\n';
+    t += '📅 تاریخ: $today\n';
+    t += 'حاضری: $status\n';
+    if (s.timing.isNotEmpty) {
+      t += '⏰ کلاس کا وقت: ${s.timing}\n';
+    }
     if (s.isOnline && s.meetingLink.isNotEmpty) {
-      t += 'آن لائن کلاس لنک: ${s.meetingLink}\n';
+      t += '💻 آن لائن کلاس لنک: ${s.meetingLink}\n';
     }
     if (s.quran != null) {
       final q = s.quran!;
-      t += '📖 قرآن پاک سبق: پارہ ${q['para'] ?? 1}، ${q['surah'] ?? ''} - ${q['sabaq'] ?? ''}\n';
+      t += '📖 قرآن سبق: پارہ ${q['para'] ?? 1}، ${q['surah'] ?? ''} (${q['sabaq'] ?? ''})\n';
       if ((q['sabaqi'] ?? '').toString().isNotEmpty) {
-        t += 'سبقی: ${q['sabaqi']}\n';
+        t += '🔁 سبقی: ${q['sabaqi']}\n';
       }
       if ((q['manzil'] ?? '').toString().isNotEmpty) {
-        t += 'منزل: ${q['manzil']}\n';
+        t += '🕋 منزل: ${q['manzil']}\n';
       }
       if ((q['grade'] ?? '').toString().isNotEmpty) {
-        t += 'کارکردگی: ${q['grade']}\n';
+        t += '⭐ کارکردگی: ${q['grade']}\n';
       }
     } else if (note != null && note.isNotEmpty) {
-      t += 'آج کا سبق: $note\n';
+      t += '📝 آج کا سبق: $note\n';
     }
-    t += 'فیس ($month): $fee\n\nطالب علم اور والدین کے لائیو ریکارڈ کے لیے ایپ انسٹال کریں اور یہ کوڈ ڈالیں: ${s.code}';
+    t += '💰 فیس ($month): $fee\n\n';
+    t += '📲 *والدین و طلبہ پورٹل:*\n';
+    t += 'روزانہ لائیو حاضری، سبق اور مکمل ریکارڈ کے لیے ایپ انسٹال کریں:\n';
+    t += '👉 https://kmb-teacher.vercel.app\n\n';
+    t += '🔑 *طالب علم لاگ اِن کوڈ:*\n';
+    t += '${s.code}\n';
+    t += '(ایپ میں "میں والد/والدہ ہوں" منتخب کر کے اوپر دیا گیا کوڈ درج کریں)';
     return t;
   }
 
@@ -659,7 +699,7 @@ class Store extends ChangeNotifier {
         'month': month,
         'notices': notices,
         'batch': batchOf(s)?['name'] ?? '',
-        'time': batchOf(s)?['time'] ?? '',
+        'time': s.timing.isNotEmpty ? s.timing : (batchOf(s)?['time'] ?? ''),
         'tests': testsFor(s),
         'hw': hwFor(s),
         'week': weekStats(s.id),
@@ -859,24 +899,28 @@ class _SplashScreenState extends State<SplashScreen>
                 child: FadeTransition(
                   opacity: _fade,
                   child: Container(
-                    padding: const EdgeInsets.all(22),
+                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: const RadialGradient(
-                        colors: [Color(0xFFFDE68A), Color(0xFFD97706)],
-                      ),
+                      color: Colors.white.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(28),
+                      border: Border.all(color: Colors.white.withOpacity(0.2)),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFD97706).withOpacity(0.4),
+                          color: Colors.black.withOpacity(0.3),
                           blurRadius: 30,
-                          spreadRadius: 6,
+                          spreadRadius: 4,
                         ),
                       ],
                     ),
-                    child: const Icon(
-                      Icons.menu_book_rounded,
-                      size: 68,
-                      color: Color(0xFF042F2E),
+                    child: Image.asset(
+                      'assets/icons/kmb_logo.png',
+                      height: 85,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) => const Icon(
+                        Icons.menu_book_rounded,
+                        size: 68,
+                        color: Color(0xFFFDE68A),
+                      ),
                     ),
                   ),
                 ),
@@ -887,8 +931,9 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Column(
                   children: [
                     const Text(
-                      'ٹیوشن و قرآن مینیجر',
+                      'ٹیوشن اکیڈمی و آن لائن قرآن پورٹل',
                       style: TextStyle(
+                        fontFamily: 'JameelNooriNastaleeq',
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -905,7 +950,7 @@ class _SplashScreenState extends State<SplashScreen>
                         border: Border.all(color: const Color(0xFFFDE68A), width: 0.8),
                       ),
                       child: const Text(
-                        'Tuition & Quran Education Manager',
+                        'KMB Education Suite · v1.1',
                         style: TextStyle(
                           fontSize: 12,
                           color: Color(0xFFFDE68A),
@@ -916,11 +961,11 @@ class _SplashScreenState extends State<SplashScreen>
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'اساتذہ، اکیڈمیز، آن لائن تدریس، طلبہ اور والدین کا ہم قدم',
+                      'اساتذہ، اکیڈمیز، آن لائن تدریس، طلبہ اور والدین کا باوقار ڈیجیٹل ساتھی',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 13,
-                        color: Colors.white.withOpacity(0.85),
+                        color: Colors.white.withOpacity(0.9),
                       ),
                     ),
                   ],
@@ -1187,7 +1232,7 @@ class _HomeState extends State<Home> {
               ],
             ),
           ),
-          floatingActionButton: tab == 0
+          floatingActionButton: (tab == 0 && store.students.isNotEmpty)
               ? FloatingActionButton.extended(
                   onPressed: () => _openAddStudentSheet(context, store),
                   backgroundColor: const Color(0xFF0F7B5F),
@@ -1240,6 +1285,7 @@ void _openAddStudentSheet(BuildContext context, Store s, [Student? edit]) {
   final phoneCtl = TextEditingController(text: edit?.phone ?? '');
   final feeCtl = TextEditingController(text: edit != null ? '${edit.fee}' : '');
   final meetCtl = TextEditingController(text: edit?.meetingLink ?? '');
+  final timeCtl = TextEditingController(text: edit?.timing ?? '');
   String? batch = edit?.batchId;
   String currency = edit?.currency ?? 'PKR';
   bool isOnline = edit?.isOnline ?? false;
@@ -1281,8 +1327,11 @@ void _openAddStudentSheet(BuildContext context, Store s, [Student? edit]) {
             ),
             const Divider(height: 20),
             field(nameCtl, 'طالب علم کا پورا نام'),
-            field(phoneCtl, 'والدین کا واٹس ایپ نمبر (03xxxxxxxxx)',
-                type: TextInputType.phone),
+            field(phoneCtl, 'والدین کا واٹس ایپ نمبر (+ کے ساتھ، مثلاً +92... یا +1...)',
+                type: TextInputType.phone,
+                helper: 'بین الاقوامی نمبر + کوڈ کے ساتھ درج کریں'),
+            field(timeCtl, 'کلاس / پڑھائی کے اوقات (مثلاً: 4:00 PM تا 6:00 PM)',
+                helper: 'روزانہ ٹیوشن یا قرآن کلاس کا وقت'),
             const Text('کورس کی نوعیت',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
             const SizedBox(height: 6),
@@ -1396,6 +1445,7 @@ void _openAddStudentSheet(BuildContext context, Store s, [Student? edit]) {
                       isOnline: isOnline,
                       meetingLink: meetCtl.text.trim(),
                       courseType: courseType,
+                      timing: timeCtl.text.trim(),
                     );
                   } else {
                     s.updateStudent(edit.copyWith(
@@ -1407,6 +1457,7 @@ void _openAddStudentSheet(BuildContext context, Store s, [Student? edit]) {
                       isOnline: isOnline,
                       meetingLink: meetCtl.text.trim(),
                       courseType: courseType,
+                      timing: timeCtl.text.trim(),
                     ));
                   }
                   Navigator.pop(ctx);
@@ -1727,7 +1778,7 @@ class _StudentsPageState extends State<StudentsPage> {
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold)),
                                       Text(
-                                        '${st.phone.isEmpty ? "بغیر فون" : st.phone} · فیس: ${st.fee} ${st.currencySymbol}',
+                                        '${st.phone.isEmpty ? "بغیر فون" : st.phone} · فیس: ${st.fee} ${st.currencySymbol}${st.timing.isNotEmpty ? " · ⏰ ${st.timing}" : ""}',
                                         style: TextStyle(
                                             fontSize: 13,
                                             color: Colors.grey.shade700),
@@ -2000,48 +2051,113 @@ class AttendancePage extends StatelessWidget {
               child: Row(
                 children: [
                   CircleAvatar(
+                    radius: 17,
                     backgroundColor: a == true
                         ? Colors.green.shade100
-                        : (a == false ? Colors.red.shade100 : Colors.grey.shade100),
+                        : (a == false ? Colors.red.shade100 : Colors.grey.shade200),
                     foregroundColor: a == true
                         ? Colors.green.shade900
-                        : (a == false ? Colors.red.shade900 : Colors.grey.shade900),
-                    child: Icon(a == true
-                        ? Icons.check
-                        : (a == false ? Icons.close : Icons.question_mark)),
+                        : (a == false ? Colors.red.shade900 : Colors.grey.shade800),
+                    child: Icon(
+                      a == true
+                          ? Icons.check_rounded
+                          : (a == false ? Icons.close_rounded : Icons.help_outline_rounded),
+                      size: 18,
+                    ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(st.name,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16)),
-                        Text('${st.courseLabel}${st.isOnline ? " · آن لائن" : ""}',
-                            style: TextStyle(
-                                fontSize: 12, color: Colors.grey.shade600)),
+                        Text(
+                          st.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
+                        Text(
+                          '${st.courseLabel}${st.timing.isNotEmpty ? " · ⏰ ${st.timing}" : ""}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  FilledButton(
-                    style: FilledButton.styleFrom(
-                      backgroundColor:
-                          a == true ? Colors.green.shade700 : Colors.grey.shade200,
-                      foregroundColor: a == true ? Colors.white : Colors.black87,
-                    ),
-                    onPressed: () => s.setAtt(st.id, true),
-                    child: const Text('حاضر'),
-                  ),
                   const SizedBox(width: 8),
-                  FilledButton(
-                    style: FilledButton.styleFrom(
-                      backgroundColor:
-                          a == false ? Colors.red.shade700 : Colors.grey.shade200,
-                      foregroundColor: a == false ? Colors.white : Colors.black87,
+                  InkWell(
+                    onTap: () => s.setAtt(st.id, true),
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                      decoration: BoxDecoration(
+                        color: a == true ? Colors.green.shade700 : Colors.green.shade50,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: a == true ? Colors.green.shade700 : Colors.green.shade300,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.check_circle_rounded,
+                            size: 14,
+                            color: a == true ? Colors.white : Colors.green.shade800,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'حاضر',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: a == true ? Colors.white : Colors.green.shade900,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    onPressed: () => s.setAtt(st.id, false),
-                    child: const Text('غیر حاضر'),
+                  ),
+                  const SizedBox(width: 6),
+                  InkWell(
+                    onTap: () => s.setAtt(st.id, false),
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                      decoration: BoxDecoration(
+                        color: a == false ? Colors.red.shade700 : Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: a == false ? Colors.red.shade700 : Colors.red.shade300,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.cancel_rounded,
+                            size: 14,
+                            color: a == false ? Colors.white : Colors.red.shade800,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'غائب',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: a == false ? Colors.white : Colors.red.shade900,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -2732,6 +2848,25 @@ class _StudentHomeState extends State<StudentHome> {
               .rpc('get_snapshot', params: {'p_code': c});
           if (r != null) m = Map<String, dynamic>.from(r);
         } catch (_) {}
+        // Fallback: direct table select if RPC function not found or failed
+        if (m == null) {
+          try {
+            final direct = await Supabase.instance.client
+                .from('snapshots')
+                .select('code, student_id, center, data, updated_at')
+                .eq('code', c)
+                .maybeSingle();
+            if (direct != null) {
+              m = {
+                'code': direct['code'],
+                'student_id': direct['student_id'],
+                'center': direct['center'] ?? 'ٹیوشن سینٹر',
+                'data': direct['data'],
+                'updated_at': direct['updated_at'],
+              };
+            }
+          } catch (_) {}
+        }
       }
       // Check local storage fallback if server returned null or offline
       if (m == null) {
@@ -3872,6 +4007,25 @@ class _ParentHomeState extends State<ParentHome> {
               .rpc('get_snapshot', params: {'p_code': c});
           if (r != null) m = Map<String, dynamic>.from(r);
         } catch (_) {}
+        // Fallback: direct table select if RPC function not found
+        if (m == null) {
+          try {
+            final direct = await Supabase.instance.client
+                .from('snapshots')
+                .select('code, student_id, center, data, updated_at')
+                .eq('code', c)
+                .maybeSingle();
+            if (direct != null) {
+              m = {
+                'code': direct['code'],
+                'student_id': direct['student_id'],
+                'center': direct['center'] ?? 'ٹیوشن سینٹر',
+                'data': direct['data'],
+                'updated_at': direct['updated_at'],
+              };
+            }
+          } catch (_) {}
+        }
       }
       // Check local storage fallback
       if (m == null) {

@@ -27,6 +27,7 @@ flutter:
   assets:
     - assets/quran_full.json
     - assets/icons/app_icon.png
+    - assets/icons/kmb_logo.png
   fonts:
     - family: JameelNooriNastaleeq
       fonts:
