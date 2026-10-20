@@ -96,6 +96,12 @@
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden">
+  <!-- WhatsApp / Social In-App Browser Download Helper Banner -->
+  <div id="inapp-alert" class="hidden bg-amber-500 text-amber-950 px-4 py-3 text-center text-xs sm:text-sm font-black shadow-md sticky top-0 z-50 flex items-center justify-center gap-2">
+    <span>⚠️</span>
+    <span data-i18n="inapp_banner">اگر واٹس ایپ میں ڈاؤن لوڈ شروع نہ ہو تو اوپر دائیں جانب 3 ڈاٹس (⋮) پر کلک کر کے <b>"Open in Chrome / براؤزر میں کھولیں"</b> منتخب کریں۔</span>
+    <button onclick="document.getElementById('inapp-alert').classList.add('hidden')" class="px-2 py-0.5 rounded bg-amber-600 text-white text-xs ml-2">✕</button>
+  </div>
 
   <!-- Navigation -->
   <header class="sticky top-0 z-50 glass-card shadow-sm border-b border-slate-200/60">
@@ -128,7 +134,7 @@
         </button>
 
         <!-- Download Button -->
-        <a href="https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/TuitionManager.apk" download onclick="trackDownload('TuitionManager')" class="inline-flex items-center gap-1.5 sm:gap-2 bg-brand-900 hover:bg-brand-800 text-white px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-md shadow-brand-900/20 hover:shadow-lg transition transform hover:-translate-y-0.5">
+        <a href="/download" target="_blank" rel="noopener noreferrer" onclick="trackDownload('TuitionManager')" class="inline-flex items-center gap-1.5 sm:gap-2 bg-brand-900 hover:bg-brand-800 text-white px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-md shadow-brand-900/20 hover:shadow-lg transition transform hover:-translate-y-0.5">
           <i data-lucide="download" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
           <span data-i18n="nav_download" class="hidden sm:inline">ڈاؤن لوڈ APK (v1.1)</span>
           <span data-i18n="nav_download_sm" class="sm:hidden">ڈاؤن لوڈ</span>
@@ -170,6 +176,12 @@
         <span data-i18n="nav_faq">اکثر پوچھے گئے سوالات</span>
         <i data-lucide="arrow-left" class="w-4 h-4 text-slate-400 rtl:rotate-0 ltr:rotate-180"></i>
       </a>
+      <div class="pt-2">
+        <a href="/download" target="_blank" rel="noopener noreferrer" onclick="trackDownload('TuitionManager'); toggleMobileMenu();" class="w-full text-center bg-brand-900 hover:bg-brand-800 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-md">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          <span data-i18n="hero_btn_main">ڈاؤن لوڈ ٹیوشن مینیجر APK (66 MB)</span>
+        </a>
+      </div>
     </div>
   </header>
 
@@ -194,12 +206,12 @@
           </p>
 
           <!-- Download Action Bar -->
-          <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-8">
-            <a href="https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/TuitionManager.apk" download onclick="trackDownload('TuitionManager')" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-brand-900 hover:bg-brand-800 text-white px-7 py-4 rounded-2xl font-black text-base shadow-xl shadow-brand-900/25 hover:shadow-2xl transition transform hover:-translate-y-0.5">
+          <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-3">
+            <a href="/download" target="_blank" rel="noopener noreferrer" onclick="trackDownload('TuitionManager')" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-brand-900 hover:bg-brand-800 text-white px-7 py-4 rounded-2xl font-black text-base shadow-xl shadow-brand-900/25 hover:shadow-2xl transition transform hover:-translate-y-0.5">
               <i data-lucide="download-cloud" class="w-6 h-6"></i>
               <div class="text-start">
-                <span class="block text-xs text-emerald-200 font-normal"><span data-i18n="hero_downloads_label">ڈاؤن لوڈز</span>: <span id="count-TuitionManager" class="font-bold text-white">42</span></span>
-                <span data-i18n="hero_btn_main" class="block text-base">ڈاؤن لوڈ اینڈرائیڈ APK (65 MB)</span>
+                <span class="block text-xs text-emerald-200 font-normal"><span data-i18n="hero_downloads_label">ڈاؤن لوڈز</span>: <span id="count-TuitionManager" class="font-bold text-white">142</span></span>
+                <span data-i18n="hero_btn_main" class="block text-base">ڈاؤن لوڈ اینڈرائیڈ APK (66 MB)</span>
               </div>
             </a>
 
@@ -210,6 +222,13 @@
                 <span data-i18n="hero_store_main" class="block text-sm text-white">Play Store (جلد دستیاب ہے)</span>
               </div>
             </div>
+          </div>
+          <!-- Download Helper Direct Link -->
+          <div class="text-xs text-slate-500 mb-8 flex flex-wrap items-center gap-2 justify-center lg:justify-start">
+            <span data-i18n="help_link_prefix">💡 ڈاؤن لوڈ نہیں ہو رہا؟</span>
+            <a href="https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/TuitionManager.apk" target="_blank" rel="noopener noreferrer" class="text-brand-700 hover:text-brand-900 font-bold underline" data-i18n="direct_cdn">ڈائریکٹ سرور لنک (Direct CDN)</a>
+            <span>•</span>
+            <a href="https://github.com/khurrammunir377-dot/tuition-manager/releases/tag/v1.1.0" target="_blank" rel="noopener noreferrer" class="text-slate-600 hover:text-slate-900 underline">GitHub Releases</a>
           </div>
 
           <!-- Trust Badges -->
@@ -479,7 +498,7 @@
           <p data-i18n="cta_sub" class="text-sm text-emerald-100 mb-8">کوئی لمبا سیٹ اپ نہیں۔ مفت ڈاؤن لوڈ کریں اور فوری استعمال شروع کریں۔</p>
           
           <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/TuitionManager.apk" download onclick="trackDownload('TuitionManager')" class="inline-flex items-center gap-3 bg-white text-brand-900 hover:bg-emerald-50 px-8 py-4 rounded-2xl font-black text-base shadow-lg transition transform hover:-translate-y-0.5">
+            <a href="/download" target="_blank" rel="noopener noreferrer" onclick="trackDownload('TuitionManager')" class="inline-flex items-center gap-3 bg-white text-brand-900 hover:bg-emerald-50 px-8 py-4 rounded-2xl font-black text-base shadow-lg transition transform hover:-translate-y-0.5">
               <i data-lucide="download" class="w-5 h-5"></i>
               <span data-i18n="cta_btn">ڈاؤن لوڈ اینڈرائیڈ APK (v1.1)</span>
             </a>
@@ -528,7 +547,7 @@
           </div>
           <div class="pt-4 border-t border-slate-700/60 flex flex-wrap items-center justify-between gap-3">
             <span class="text-xs text-slate-400"><span data-i18n="downloads_word">ڈاؤن لوڈز</span>: <strong id="count-KMB_Downloader" class="text-white">128</strong></span>
-            <a href="https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/KMB_Downloader.apk" download onclick="trackDownload('KMB_Downloader')" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl font-bold text-xs transition shadow-md shadow-blue-600/30">
+            <a href="/download/downloader" target="_blank" rel="noopener noreferrer" onclick="trackDownload('KMB_Downloader')" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl font-bold text-xs transition shadow-md shadow-blue-600/30">
               <i data-lucide="download" class="w-4 h-4"></i>
               <span data-i18n="app1_btn">ڈاؤن لوڈ APK (210 MB)</span>
             </a>
@@ -551,7 +570,7 @@
           </div>
           <div class="pt-4 border-t border-slate-700/60 flex flex-wrap items-center justify-between gap-3">
             <span class="text-xs text-slate-400"><span data-i18n="downloads_word">ڈاؤن لوڈز</span>: <strong id="count-Qalbi_Islamic" class="text-white">85</strong></span>
-            <a href="https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/Qalbi_Islamic.apk" download onclick="trackDownload('Qalbi_Islamic')" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-bold text-xs transition shadow-md shadow-emerald-600/30">
+            <a href="/download/qalbi" target="_blank" rel="noopener noreferrer" onclick="trackDownload('Qalbi_Islamic')" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-bold text-xs transition shadow-md shadow-emerald-600/30">
               <i data-lucide="download" class="w-4 h-4"></i>
               <span data-i18n="app2_btn">ڈاؤن لوڈ APK (60 MB)</span>
             </a>
@@ -614,7 +633,7 @@
         </div>
 
         <div class="flex items-center gap-4">
-          <a href="https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/TuitionManager.apk" download onclick="trackDownload('TuitionManager')" class="text-xs bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-xl border border-slate-800 flex items-center gap-2">
+          <a href="/download" target="_blank" rel="noopener noreferrer" onclick="trackDownload('TuitionManager')" class="text-xs bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-xl border border-slate-800 flex items-center gap-2">
             <i data-lucide="download" class="w-3.5 h-3.5"></i>
             <span data-i18n="footer_download">ڈاؤن لوڈ اینڈرائیڈ APK</span>
           </a>
@@ -730,6 +749,9 @@
     // ==========================================
     const I18N = {
       ur: {
+        inapp_banner: 'اگر واٹس ایپ میں ڈاؤن لوڈ شروع نہ ہو تو اوپر 3 ڈاٹس (⋮) پر کلک کر کے "Open in Chrome / براؤزر میں کھولیں" منتخب کریں۔',
+        help_link_prefix: '💡 ڈاؤن لوڈ نہیں ہو رہا؟',
+        direct_cdn: 'ڈائریکٹ سرور لنک (Direct CDN)',
         meta_title: 'ٹیوشن و آن لائن قرآن مینیجر | اکیڈمیز، ہوم ٹیوٹرز اور آن لائن اساتذہ کی #1 ایپ',
         meta_desc: 'پاکستان اور دنیا بھر کے اکیڈمیز، ہوم ٹیوٹرز اور آن لائن قرآن اکیڈمیز کے لیے جدید ترین ایپ۔ حاضری، فیس رسیدیں، ٹیسٹ، زوم کلاسز اور قرآن پاک ٹریکر۔',
         lang_btn: 'English',
@@ -997,7 +1019,18 @@
     }
 
     // Apply saved language on load
+    // Detect In-App Browsers (WhatsApp, FB, etc.) that block direct downloads
+    function detectInAppBrowser() {
+      const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+      const isInApp = /WhatsApp|FBAN|FBAV|Instagram|Line|Twitter|Snapchat/i.test(ua);
+      if (isInApp) {
+        const banner = document.getElementById('inapp-alert');
+        if (banner) banner.classList.remove('hidden');
+      }
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
+      detectInAppBrowser();
       setLanguage(currentLang);
       loadDownloadCounts();
     });

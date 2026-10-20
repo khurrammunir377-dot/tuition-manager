@@ -1,0 +1,24 @@
+{
+  "redirects": [
+    {
+      "source": "/download",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/TuitionManager.apk",
+      "permanent": false
+    },
+    {
+      "source": "/download/tuition",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/TuitionManager.apk",
+      "permanent": false
+    },
+    {
+      "source": "/download/downloader",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/KMB_Downloader_v3.3.0.apk",
+      "permanent": false
+    },
+    {
+      "source": "/download/qalbi",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/Qalbi-Release.apk",
+      "permanent": false
+    }
+  ]
+}
