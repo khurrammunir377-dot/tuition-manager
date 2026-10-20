@@ -45,9 +45,9 @@ app.*.map.json
 /android/app/release
 
 # Ignore large APK binary files in git (keep landing lightweight and fast for Vercel)
+# Exclude APKs globally, but allow those in the landing folder for deployment
 *.apk
-TuitionManager.apk
-landing/*.apk
+!landing/*.apk
 
 *.pdf
 
