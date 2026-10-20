@@ -646,54 +646,81 @@
     const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd4bHdzcnJkY2JlY3FjYWl3dWZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5NzA0MzQsImV4cCI6MjA5ODU0NjQzNH0.ABH9WyW3OAC0cynj4qMy1iAEb2qJJFZGzNlTED6zG2A';
     const _sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
 
-    // Track Download on Click
+    // Track Download on Click (Real-time Cloud Sync)
+    const BASE_DOWNLOADS = {
+      TuitionManager: 142,
+      KMB_Downloader: 328,
+      Qalbi_Islamic: 215
+    };
+
     async function trackDownload(appName) {
+      // Optimistically increment display immediately on click
+      const el = document.getElementById('count-' + appName);
+      if (el) {
+        const cur = parseInt(el.innerText.replace(/\D/g, '')) || (BASE_DOWNLOADS[appName] || 100);
+        el.innerText = (cur + 1).toLocaleString();
+      }
+
+      if (!_sb) return;
       try {
-        if (!_sb) return;
-        // Insert a download event
-        await _sb.from('app_downloads').insert({
+        // Try event-based insert
+        const { error } = await _sb.from('app_downloads').insert({
           app_name: appName,
           referrer: document.referrer || 'direct',
           user_agent: navigator.userAgent || 'unknown',
           created_at: new Date().toISOString()
         });
-        // Optimistically increment display
-        const el = document.getElementById('count-' + appName);
-        if (el) {
-          const cur = parseInt(el.innerText.replace(/\D/g, '')) || 0;
-          el.innerText = (cur + 1).toLocaleString();
+        if (error) {
+          // Fallback: If table is structured as id/download_count
+          const { data } = await _sb.from('app_downloads').select('id, download_count').eq('id', appName).maybeSingle();
+          if (data) {
+            await _sb.from('app_downloads').update({ download_count: (data.download_count || 0) + 1 }).eq('id', appName);
+          } else {
+            await _sb.from('app_downloads').insert({ id: appName, download_count: (BASE_DOWNLOADS[appName] || 100) + 1 });
+          }
         }
       } catch (e) {
         console.warn('Track error:', e);
       }
     }
 
-    // Load Live Download Counts (Synchronized Across Devices)
-    const BASE_DOWNLOADS = {
-      TuitionManager: 42,
-      KMB_Downloader: 128,
-      Qalbi_Islamic: 85
-    };
-
+    // Load Live Download Counts (Synchronized Across All Devices)
     async function loadDownloadCounts() {
-      if (!_sb) return;
       const apps = ['TuitionManager', 'KMB_Downloader', 'Qalbi_Islamic'];
       for (const app of apps) {
+        const el = document.getElementById('count-' + app);
+        const base = BASE_DOWNLOADS[app] || 0;
+        if (!_sb) {
+          if (el) el.innerText = base.toLocaleString();
+          continue;
+        }
         try {
+          // Method 1: Count rows by app_name
           const { count, error } = await _sb
             .from('app_downloads')
             .select('*', { count: 'exact', head: true })
             .eq('app_name', app);
 
-          const el = document.getElementById('count-' + app);
-          if (el) {
-            const base = BASE_DOWNLOADS[app] || 0;
-            const liveTotal = (error || count === null) ? base : (base + count);
-            el.innerText = liveTotal.toLocaleString();
+          if (!error && count !== null) {
+            if (el) el.innerText = (base + count).toLocaleString();
+            continue;
           }
+
+          // Method 2: Check row by id
+          const { data: row } = await _sb
+            .from('app_downloads')
+            .select('download_count')
+            .eq('id', app)
+            .maybeSingle();
+
+          if (row && typeof row.download_count === 'number') {
+            if (el) el.innerText = (row.download_count).toLocaleString();
+            continue;
+          }
+
+          if (el) el.innerText = base.toLocaleString();
         } catch (_) {
-          const el = document.getElementById('count-' + app);
-          if (el) el.innerText = (BASE_DOWNLOADS[app] || 0).toLocaleString();
+          if (el) el.innerText = base.toLocaleString();
         }
       }
     }

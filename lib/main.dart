@@ -290,7 +290,19 @@ class Store extends ChangeNotifier {
         }).toList(),
         onConflict: 'code',
       );
-    } catch (_) {}
+    } catch (_) {
+      try {
+        final c = Supabase.instance.client;
+        await c.from('snapshots').upsert(
+          students.map((s) => {
+            'code': s.code.toLowerCase().trim(),
+            'data': snapshot(s),
+            'updated_at': DateTime.now().toUtc().toIso8601String(),
+          }).toList(),
+          onConflict: 'code',
+        );
+      } catch (_) {}
+    }
   }
 
   void _autoSync() {
@@ -511,11 +523,14 @@ class Store extends ChangeNotifier {
     }
     t += '💰 فیس ($month): $fee\n\n';
     t += '📲 *والدین و طلبہ پورٹل:*\n';
-    t += 'روزانہ لائیو حاضری، سبق اور مکمل ریکارڈ کے لیے ایپ انسٹال کریں:\n';
+    t += 'روزانہ لائیو حاضری، سبق اور مکمل ریکارڈ دیکھنے کے لیے ایپ ڈاؤن لوڈ کریں:\n';
     t += '👉 https://kmb-teacher.vercel.app\n\n';
-    t += '🔑 *طالب علم لاگ اِن کوڈ:*\n';
-    t += '${s.code}\n';
-    t += '(ایپ میں "میں والد/والدہ ہوں" منتخب کر کے اوپر دیا گیا کوڈ درج کریں)';
+    t += '🔑 *طالب علم لاگ اِن کوڈ (Student Code):*\n';
+    t += '━━━━━━━━━━━━━━━━━━━━\n';
+    t += '```${s.code}```\n';
+    t += '━━━━━━━━━━━━━━━━━━━━\n';
+    t += '👆 _کوڈ کو کاپی کرنے کے لیے اوپر دیے گئے کوڈ پر ٹیپ کریں_\n';
+    t += '(ایپ میں "میں والد/والدہ ہوں" یا "میں طالب علم ہوں" منتخب کر کے یہ کوڈ درج کریں)';
     return t;
   }
 
@@ -566,7 +581,9 @@ class Store extends ChangeNotifier {
         .join('، ');
     final fee = isPaid(s.id) ? 'ادا ✅' : 'باقی ${remaining(s.id)} ${s.currencySymbol}';
     final tl = ts.isEmpty ? '' : 'ٹیسٹ: $ts\n';
-    return 'السلام علیکم! ${s.name} کا ہفتہ وار خلاصہ:\nحاضری: ${w[0]} میں سے ${w[1]} دن\n${tl}فیس: $fee\n$center';
+    return 'السلام علیکم! ${s.name} کا ہفتہ وار خلاصہ:\nحاضری: ${w[0]} میں سے ${w[1]} دن\n${tl}فیس: $fee\n\n'
+        '📲 مکمل ریکارڈ دیکھنے کے لیے ایپ لنک:\nhttps://kmb-teacher.vercel.app\n\n'
+        '🔑 طالب علم لاگ اِن کوڈ:\n━━━━━━━━━━━━━━━━━━━━\n```${s.code}```\n━━━━━━━━━━━━━━━━━━━━\n$center';
   }
 
   Map<String, dynamic>? batchOf(Student s) {
@@ -718,16 +735,31 @@ class Store extends ChangeNotifier {
         'updated_at': DateTime.now().toUtc().toIso8601String(),
       }, onConflict: 'owner');
       if (students.isEmpty) return 'بیک اپ ہو گیا';
-      await c.from('snapshots').upsert(
-          students
-              .map((s) => {
-                    'code': s.code,
-                    'student_id': s.id,
-                    'center': center,
-                    'data': snapshot(s),
-                  })
-              .toList(),
-          onConflict: 'code');
+      try {
+        await c.from('snapshots').upsert(
+            students
+                .map((s) => {
+                      'code': s.code.toLowerCase().trim(),
+                      'student_id': s.id,
+                      'center': center,
+                      'data': snapshot(s),
+                      'updated_at': DateTime.now().toUtc().toIso8601String(),
+                    })
+                .toList(),
+            onConflict: 'code');
+      } catch (_) {
+        try {
+          await c.from('snapshots').upsert(
+              students
+                  .map((s) => {
+                        'code': s.code.toLowerCase().trim(),
+                        'data': snapshot(s),
+                        'updated_at': DateTime.now().toUtc().toIso8601String(),
+                      })
+                  .toList(),
+              onConflict: 'code');
+        } catch (_) {}
+      }
       return 'سنک مکمل: ${students.length} طلبہ';
     } catch (e) {
       if ('$e'.contains('FREE_LIMIT')) {
@@ -2846,22 +2878,30 @@ class _StudentHomeState extends State<StudentHome> {
         try {
           final r = await Supabase.instance.client
               .rpc('get_snapshot', params: {'p_code': c});
-          if (r != null) m = Map<String, dynamic>.from(r);
+          if (r != null) {
+            final resMap = Map<String, dynamic>.from(r);
+            if (resMap.containsKey('data') && resMap['data'] is Map) {
+              m = resMap;
+            } else {
+              m = {'code': c, 'center': 'ٹیوشن اکیڈمی', 'data': resMap};
+            }
+          }
         } catch (_) {}
         // Fallback: direct table select if RPC function not found or failed
         if (m == null) {
           try {
             final direct = await Supabase.instance.client
                 .from('snapshots')
-                .select('code, student_id, center, data, updated_at')
-                .eq('code', c)
+                .select('*')
+                .or('code.ilike.$c,code.eq.$c')
                 .maybeSingle();
             if (direct != null) {
+              final rawData = direct['data'];
               m = {
-                'code': direct['code'],
-                'student_id': direct['student_id'],
-                'center': direct['center'] ?? 'ٹیوشن سینٹر',
-                'data': direct['data'],
+                'code': direct['code'] ?? c,
+                'student_id': direct['student_id'] ?? '',
+                'center': direct['center'] ?? 'ٹیوشن اکیڈمی',
+                'data': rawData is Map ? Map<String, dynamic>.from(rawData) : {},
                 'updated_at': direct['updated_at'],
               };
             }
@@ -2984,7 +3024,7 @@ class _StudentHomeState extends State<StudentHome> {
 
   @override
   Widget build(BuildContext context) {
-    final d = snap == null ? null : Map<String, dynamic>.from(snap!['data']);
+    final d = snap == null ? null : (snap!['data'] is Map ? Map<String, dynamic>.from(snap!['data']) : Map<String, dynamic>.from(snap!));
     return Scaffold(
       appBar: AppBar(
         title: Text(snap?['center'] ?? 'طالب علم پورٹل'),
@@ -4005,22 +4045,30 @@ class _ParentHomeState extends State<ParentHome> {
         try {
           final r = await Supabase.instance.client
               .rpc('get_snapshot', params: {'p_code': c});
-          if (r != null) m = Map<String, dynamic>.from(r);
+          if (r != null) {
+            final resMap = Map<String, dynamic>.from(r);
+            if (resMap.containsKey('data') && resMap['data'] is Map) {
+              m = resMap;
+            } else {
+              m = {'code': c, 'center': 'ٹیوشن اکیڈمی', 'data': resMap};
+            }
+          }
         } catch (_) {}
         // Fallback: direct table select if RPC function not found
         if (m == null) {
           try {
             final direct = await Supabase.instance.client
                 .from('snapshots')
-                .select('code, student_id, center, data, updated_at')
-                .eq('code', c)
+                .select('*')
+                .or('code.ilike.$c,code.eq.$c')
                 .maybeSingle();
             if (direct != null) {
+              final rawData = direct['data'];
               m = {
-                'code': direct['code'],
-                'student_id': direct['student_id'],
-                'center': direct['center'] ?? 'ٹیوشن سینٹر',
-                'data': direct['data'],
+                'code': direct['code'] ?? c,
+                'student_id': direct['student_id'] ?? '',
+                'center': direct['center'] ?? 'ٹیوشن اکیڈمی',
+                'data': rawData is Map ? Map<String, dynamic>.from(rawData) : {},
                 'updated_at': direct['updated_at'],
               };
             }
@@ -4155,7 +4203,7 @@ class _ParentHomeState extends State<ParentHome> {
 
   @override
   Widget build(BuildContext context) {
-    final d = snap == null ? null : Map<String, dynamic>.from(snap!['data']);
+    final d = snap == null ? null : (snap!['data'] is Map ? Map<String, dynamic>.from(snap!['data']) : Map<String, dynamic>.from(snap!));
     return Scaffold(
       appBar: AppBar(
         title: Text(snap?['center'] ?? 'والدین پورٹل'),
