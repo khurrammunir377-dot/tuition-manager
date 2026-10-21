@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:printing/printing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'quran_data.dart';
 
@@ -30,6 +31,9 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
 
   // Continuous Page View mode vs Ayah Cards mode
   bool _continuousView = true;
+
+  // Noorani Qaida PDF Mode vs List Mode
+  bool _showQaidaPdf = true;
 
   // Auto-scroll features
   bool _isAutoScrolling = false;
@@ -1478,93 +1482,178 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
 
   // --- 4. Noorani Qaida Tab View ---
   Widget _buildQaidaTabView() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(14),
-      itemCount: QuranData.qaidaLessons.length,
-      itemBuilder: (ctx, idx) {
-        final lesson = QuranData.qaidaLessons[idx];
-        final letters = (lesson['letters'] as List<dynamic>?) ?? [];
-        return Card(
-          margin: const EdgeInsets.only(bottom: 16),
-          color: _cardBg,
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
-            side: BorderSide(color: _primaryAccent.withValues(alpha: 0.2)),
+    return Column(
+      children: [
+        // Mode Selector Bar (PDF Book vs Lesson List)
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: _cardBg,
+            border: Border(bottom: BorderSide(color: _primaryAccent.withValues(alpha: 0.15))),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: _primaryAccent,
-                      foregroundColor: Colors.white,
-                      child: Text('${lesson['lesson']}',
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
+          child: Row(
+            children: [
+              Expanded(
+                child: SegmentedButton<bool>(
+                  segments: const [
+                    ButtonSegment<bool>(
+                      value: true,
+                      icon: Icon(Icons.picture_as_pdf_rounded, size: 18),
+                      label: Text('مکمل اصل کتاب (PDF)', style: TextStyle(fontFamily: 'JameelNooriNastaleeq', fontSize: 13, fontWeight: FontWeight.bold)),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${lesson['title']}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: _textColor,
-                              fontFamily: 'JameelNooriNastaleeq',
-                            ),
-                          ),
-                          Text(
-                            '${lesson['desc']}',
-                            style: TextStyle(fontSize: 13, color: _subtextColor, fontFamily: 'JameelNooriNastaleeq'),
-                          ),
-                        ],
-                      ),
+                    ButtonSegment<bool>(
+                      value: false,
+                      icon: Icon(Icons.format_list_bulleted_rounded, size: 18),
+                      label: Text('اسباق کی فہرست', style: TextStyle(fontFamily: 'JameelNooriNastaleeq', fontSize: 13)),
                     ),
                   ],
+                  selected: {_showQaidaPdf},
+                  onSelectionChanged: (Set<bool> newSelection) {
+                    setState(() => _showQaidaPdf = newSelection.first);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+                      if (states.contains(WidgetState.selected)) {
+                        return _primaryAccent;
+                      }
+                      return Colors.transparent;
+                    }),
+                    foregroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+                      if (states.contains(WidgetState.selected)) {
+                        return Colors.white;
+                      }
+                      return _textColor;
+                    }),
+                  ),
                 ),
-                const Divider(height: 20),
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  alignment: WrapAlignment.center,
-                  children: letters.map((l) {
-                    return Container(
-                      width: 60,
-                      height: 60,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            _primaryAccent.withValues(alpha: 0.07),
-                            _primaryAccent.withValues(alpha: 0.18),
-                          ],
+              ),
+            ],
+          ),
+        ),
+
+        // Content Area
+        Expanded(
+          child: _showQaidaPdf
+              ? PdfPreview(
+                  build: (format) async {
+                    final data = await rootBundle.load('assets/noorani_qaida.pdf');
+                    return data.buffer.asUint8List();
+                  },
+                  canChangeOrientation: false,
+                  canChangePageFormat: false,
+                  canDebug: false,
+                  maxPageWidth: 720,
+                  pdfFileName: 'Noorani_Qaida.pdf',
+                  scrollViewDecoration: BoxDecoration(color: _bgSurface),
+                  loadingWidget: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(color: _primaryAccent),
+                        const SizedBox(height: 14),
+                        Text(
+                          'نورانی قاعدہ لوڈ ہو رہا ہے...',
+                          style: TextStyle(
+                            fontFamily: 'JameelNooriNastaleeq',
+                            fontSize: 16,
+                            color: _textColor,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: _primaryAccent.withValues(alpha: 0.25)),
+                      ],
+                    ),
+                  ),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.all(14),
+                  itemCount: QuranData.qaidaLessons.length,
+                  itemBuilder: (ctx, idx) {
+                    final lesson = QuranData.qaidaLessons[idx];
+                    final letters = (lesson['letters'] as List<dynamic>?) ?? [];
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      color: _cardBg,
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                        side: BorderSide(color: _primaryAccent.withValues(alpha: 0.2)),
                       ),
-                      child: Text(
-                        '$l',
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: _textColor,
-                          fontFamily: 'PdmsSaleemQuran',
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Row(
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: _primaryAccent,
+                                  foregroundColor: Colors.white,
+                                  child: Text('${lesson['lesson']}',
+                                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${lesson['title']}',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: _textColor,
+                                          fontFamily: 'JameelNooriNastaleeq',
+                                        ),
+                                      ),
+                                      Text(
+                                        '${lesson['desc']}',
+                                        style: TextStyle(fontSize: 13, color: _subtextColor, fontFamily: 'JameelNooriNastaleeq'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Divider(height: 20),
+                            Wrap(
+                              spacing: 10,
+                              runSpacing: 10,
+                              alignment: WrapAlignment.center,
+                              children: letters.map((l) {
+                                return Container(
+                                  width: 60,
+                                  height: 60,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        _primaryAccent.withValues(alpha: 0.07),
+                                        _primaryAccent.withValues(alpha: 0.18),
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: Border.all(color: _primaryAccent.withValues(alpha: 0.25)),
+                                  ),
+                                  child: Text(
+                                    '$l',
+                                    style: TextStyle(
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.bold,
+                                      color: _textColor,
+                                      fontFamily: 'PdmsSaleemQuran',
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ],
                         ),
                       ),
                     );
-                  }).toList(),
+                  },
                 ),
-              ],
-            ),
-          ),
-        );
-      },
+        ),
+      ],
     );
   }
 }

@@ -50,5 +50,6 @@ app.*.map.json
 !landing/*.apk
 
 *.pdf
+!assets/noorani_qaida.pdf
 
 .vercel

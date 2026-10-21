@@ -1,20 +1,50 @@
 {
   "outputDirectory": "landing",
-  "headers": [
-    {
-      "source": "/(.*\\.apk)",
-      "headers": [
-        {"key": "Content-Type", "value": "application/vnd.android.package-archive"},
-        {"key": "Content-Disposition", "value": "attachment"},
-        {"key": "Cache-Control", "value": "public, max-age=86400"}
-      ]
-    }
-  ],
-  "rewrites": [
-    {"source": "/download", "destination": "/TuitionManager.apk"},
-    {"source": "/download/tuition", "destination": "/TuitionManager.apk"}
-  ],
   "redirects": [
-    {"source": "/download/downloader", "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/KMB_Downloader_v3.3.0.apk", "permanent": false}
+    {
+      "source": "/download",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/TuitionManager.apk",
+      "permanent": false
+    },
+    {
+      "source": "/download/tuition",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/TuitionManager.apk",
+      "permanent": false
+    },
+    {
+      "source": "/TuitionManager.apk",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/TuitionManager.apk",
+      "permanent": false
+    },
+    {
+      "source": "/download/downloader",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/KMB_Downloader_v3.4.1_arm64.apk",
+      "permanent": false
+    },
+    {
+      "source": "/KMB_Downloader.apk",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/KMB_Downloader_v3.4.1_arm64.apk",
+      "permanent": false
+    },
+    {
+      "source": "/download/qalbi",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/Qalbi-Release.apk",
+      "permanent": false
+    },
+    {
+      "source": "/Qalbi-Release.apk",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/Qalbi-Release.apk",
+      "permanent": false
+    },
+    {
+      "source": "/download/getcarout",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/GetCarOut.apk",
+      "permanent": false
+    },
+    {
+      "source": "/GetCarOut.apk",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/GetCarOut.apk",
+      "permanent": false
+    }
   ]
 }
