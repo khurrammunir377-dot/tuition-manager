@@ -1,5 +1,5 @@
 {
-  "outputDirectory": "landing",
+  "cleanUrls": true,
   "redirects": [
     {
       "source": "/download",
