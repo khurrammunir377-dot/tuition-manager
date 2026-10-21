@@ -1,4 +1,6 @@
 *
+!index.html
+!assets/**
 !landing/**
 !vercel.json
 !.gitignore
