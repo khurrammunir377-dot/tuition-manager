@@ -43,6 +43,7 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
   // Bookmarks: list of Map {'surah': int, 'ayah': int, 'surahName': String, 'time': String}
   List<Map<String, dynamic>> _bookmarks = [];
   Map<String, dynamic>? _lastRead;
+  int? _targetAyah;
 
   // Search filter
   String _surahSearch = '';
@@ -258,7 +259,16 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
                             Navigator.pop(ctx);
                             setState(() {
                               _selectedSurah = sNum;
+                              _targetAyah = aNum;
                               _tabController.animateTo(2);
+                            });
+                            Future.delayed(const Duration(milliseconds: 300), () {
+                              if (_scrollController.hasClients) {
+                                if (!_continuousView) {
+                                  final targetOffset = ((aNum - 1) * 110.0).clamp(0.0, _scrollController.position.maxScrollExtent);
+                                  _scrollController.animateTo(targetOffset, duration: const Duration(milliseconds: 400), curve: Curves.easeOut);
+                                }
+                              }
                             });
                           },
                         ),
@@ -672,16 +682,30 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
                             child: Text('${s['number']}',
                                 style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: _primaryAccent.withValues(alpha: 0.08),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              s['revelationType'] == 'Meccan' ? 'مکی' : 'مدنی',
-                              style: TextStyle(fontSize: 10, color: _primaryAccent, fontWeight: FontWeight.bold),
-                            ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: _primaryAccent.withValues(alpha: 0.08),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  s['revelationType'] == 'Meccan' ? 'مکی' : 'مدنی',
+                                  style: TextStyle(fontSize: 10, color: _primaryAccent, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              GestureDetector(
+                                onTap: () => _toggleBookmark(s['number'], 1, s['name']),
+                                child: Icon(
+                                  _isBookmarked(s['number'], 1) ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                                  size: 18,
+                                  color: _isBookmarked(s['number'], 1) ? const Color(0xFFD97706) : Colors.grey.shade400,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -938,6 +962,38 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
                 ),
               ),
               const Spacer(),
+              // Quick Bookmark Toggle for Current Surah
+              InkWell(
+                onTap: () => _toggleBookmark(_selectedSurah, _targetAyah ?? 1, curSurahMeta['name']),
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: _isBookmarked(_selectedSurah, _targetAyah ?? 1) ? const Color(0xFFD97706) : _cardBg,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: const Color(0xFFD97706)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        _isBookmarked(_selectedSurah, _targetAyah ?? 1) ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                        size: 14,
+                        color: _isBookmarked(_selectedSurah, _targetAyah ?? 1) ? Colors.white : const Color(0xFFD97706),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        _isBookmarked(_selectedSurah, _targetAyah ?? 1) ? 'بک مارک شدہ' : 'بک مارک کریں',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: _isBookmarked(_selectedSurah, _targetAyah ?? 1) ? Colors.white : const Color(0xFFD97706),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
               // Auto-Scroll Toggle Button
               InkWell(
                 onTap: _toggleAutoScroll,
