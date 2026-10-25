@@ -1,0 +1,11 @@
+{
+  "version": "1.2.0",
+  "build_number": 3,
+  "release_date": "2026-10-25",
+  "min_required_version": "1.0.0",
+  "title_ur": "نیا ورژن دستیاب ہے! (v1.2.0)",
+  "title_en": "New Update Available! (v1.2.0)",
+  "notes_ur": "• واٹس ایپ وائس و ویڈیو کال بٹن اور کال دورانیہ رپورٹ\n• تلاوت کے دوران تیز سکرول بار اور فوری بٹن\n• درون ایپ سوالات و پیغامات کی خودکار ترسیل\n• سپلیش اور قرآن پاک ٹیبز کے بڑے خوبصورت فونٹس",
+  "notes_en": "• Direct WhatsApp Voice & Video Call with duration log\n• Smooth Quran scrolling with fast draggable scrollbar\n• In-app Q&A messaging fix\n• Larger fonts for Splash screen and Quran tabs",
+  "apk_url": "https://kmb-teacher.vercel.app/TuitionManager.apk"
+}

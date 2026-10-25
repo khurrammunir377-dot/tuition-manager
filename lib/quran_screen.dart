@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -385,22 +386,33 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
             onPressed: _showSettingsDialog,
           ),
         ],
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: Colors.amber.shade300,
-          indicatorWeight: 3.5,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
-          isScrollable: false, // Fixed 4 buttons - no moving or drifting left!
-          labelPadding: EdgeInsets.zero,
-          labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-          unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal, fontSize: 11),
-          tabs: const [
-            Tab(icon: Icon(Icons.list_alt_rounded, size: 20), text: 'سورتیں'),
-            Tab(icon: Icon(Icons.menu_book_rounded, size: 20), text: 'پارے'),
-            Tab(icon: Icon(Icons.auto_stories_rounded, size: 20), text: 'تلاوت'),
-            Tab(icon: Icon(Icons.school_rounded, size: 20), text: 'قاعدہ'),
-          ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(60),
+          child: TabBar(
+            controller: _tabController,
+            indicatorColor: Colors.amber.shade300,
+            indicatorWeight: 4.0,
+            labelColor: Colors.amber.shade200,
+            unselectedLabelColor: Colors.white70,
+            isScrollable: false,
+            labelPadding: EdgeInsets.zero,
+            labelStyle: const TextStyle(
+              fontFamily: 'JameelNooriNastaleeq',
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+            unselectedLabelStyle: const TextStyle(
+              fontFamily: 'JameelNooriNastaleeq',
+              fontWeight: FontWeight.normal,
+              fontSize: 16,
+            ),
+            tabs: const [
+              Tab(icon: Icon(Icons.list_alt_rounded, size: 22), text: 'سورتیں', iconMargin: EdgeInsets.only(bottom: 2)),
+              Tab(icon: Icon(Icons.menu_book_rounded, size: 22), text: 'پارے', iconMargin: EdgeInsets.only(bottom: 2)),
+              Tab(icon: Icon(Icons.auto_stories_rounded, size: 22), text: 'تلاوت', iconMargin: EdgeInsets.only(bottom: 2)),
+              Tab(icon: Icon(Icons.school_rounded, size: 22), text: 'قاعدہ', iconMargin: EdgeInsets.only(bottom: 2)),
+            ],
+          ),
         ),
       ),
       body: _isLoading
@@ -515,7 +527,7 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
               // Tajweed color toggle
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('رنگین تجویدی حروف (Colored Tajweed)', style: TextStyle(fontWeight: FontWeight.bold)),
+                title: const Text('تجویدی حروف (Tajweed Letters)', style: TextStyle(fontWeight: FontWeight.bold)),
                 subtitle: const Text('لفظ اللہ (سرخ)، مدات (نیلا)، اخفاء و غنہ (سبز)', style: TextStyle(fontSize: 12)),
                 value: _tajweedColors,
                 onChanged: (v) {
@@ -1058,13 +1070,69 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
           ),
         ),
 
-        // Reading Content: Either Continuous Mushaf View or Card List View
+        // Reading Content: Wrapped with Interactive Scrollbar and Quick Jump Float Buttons
         Expanded(
-          child: ayahs.isEmpty
-              ? Center(child: Text('آیات لوڈ ہو رہی ہیں...', style: TextStyle(color: _textColor, fontFamily: 'JameelNooriNastaleeq')))
-              : _continuousView
-                  ? _buildContinuousMushafView(ayahs, curSurahMeta)
-                  : _buildCardListView(ayahs),
+          child: Stack(
+            children: [
+              Scrollbar(
+                controller: _scrollController,
+                thumbVisibility: true,
+                interactive: true,
+                thickness: 8,
+                radius: const Radius.circular(6),
+                child: ayahs.isEmpty
+                    ? Center(child: Text('آیات لوڈ ہو رہی ہیں...', style: TextStyle(color: _textColor, fontFamily: 'JameelNooriNastaleeq')))
+                    : _continuousView
+                        ? _buildContinuousMushafView(ayahs, curSurahMeta)
+                        : _buildCardListView(ayahs),
+              ),
+              // Floating Up & Down Quick Navigation Buttons (تلاوت کے دوران فوری اوپر نیچے جانے کے لیے)
+              Positioned(
+                bottom: 16,
+                right: 14,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    FloatingActionButton.small(
+                      heroTag: 'quran_scroll_top_btn',
+                      backgroundColor: _cardBg.withValues(alpha: 0.92),
+                      foregroundColor: _primaryAccent,
+                      elevation: 4,
+                      tooltip: 'اوپر جائیں (Scroll to Top)',
+                      onPressed: () {
+                        if (_scrollController.hasClients) {
+                          _scrollController.animateTo(
+                            0,
+                            duration: const Duration(milliseconds: 350),
+                            curve: Curves.easeOutCubic,
+                          );
+                        }
+                      },
+                      child: const Icon(Icons.keyboard_arrow_up_rounded, size: 24),
+                    ),
+                    const SizedBox(height: 8),
+                    FloatingActionButton.small(
+                      heroTag: 'quran_scroll_bottom_btn',
+                      backgroundColor: _cardBg.withValues(alpha: 0.92),
+                      foregroundColor: _primaryAccent,
+                      elevation: 4,
+                      tooltip: 'نیچے جائیں (Scroll to Bottom)',
+                      onPressed: () {
+                        if (_scrollController.hasClients) {
+                          _scrollController.animateTo(
+                            _scrollController.position.maxScrollExtent,
+                            duration: const Duration(milliseconds: 350),
+                            curve: Curves.easeOutCubic,
+                          );
+                        }
+                      },
+                      child: const Icon(Icons.keyboard_arrow_down_rounded, size: 24),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -1303,44 +1371,20 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
         ));
       }
 
-      // Ayah End Stop badge (۝ayahNum) clickable for instant bookmark
+      // Ultra-fast lightweight Quranic Ayah Stop marker (﴿ayahNum﴾) - no heavy WidgetSpan layout overhead!
       final isBm = _isBookmarked(_selectedSurah, ayahNum);
-      spans.add(WidgetSpan(
-        alignment: PlaceholderAlignment.middle,
-        child: InkWell(
-          onTap: () => _toggleBookmark(_selectedSurah, ayahNum, surahName),
-          borderRadius: BorderRadius.circular(16),
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 4),
-            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-            decoration: BoxDecoration(
-              color: isBm ? const Color(0xFFD97706) : _primaryAccent.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: isBm ? const Color(0xFFB45309) : _primaryAccent.withValues(alpha: 0.3)),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (isBm)
-                  const Padding(
-                    padding: EdgeInsets.only(left: 3),
-                    child: Icon(Icons.bookmark_rounded, size: 12, color: Colors.white),
-                  ),
-                Text(
-                  '۝$ayahNum',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: isBm ? Colors.white : _primaryAccent,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: _quranFontFamily,
-                  ),
-                ),
-              ],
-            ),
-          ),
+      spans.add(TextSpan(
+        text: ' ﴿$ayahNum﴾ ',
+        recognizer: TapGestureRecognizer()
+          ..onTap = () => _toggleBookmark(_selectedSurah, ayahNum, surahName),
+        style: TextStyle(
+          color: isBm ? const Color(0xFFD97706) : _primaryAccent,
+          fontSize: _fontSize * 0.85,
+          fontWeight: FontWeight.bold,
+          fontFamily: _quranFontFamily,
+          backgroundColor: isBm ? const Color(0xFFFDE68A).withValues(alpha: 0.35) : null,
         ),
       ));
-      spans.add(const TextSpan(text: ' '));
     }
 
     return Text.rich(

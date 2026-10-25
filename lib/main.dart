@@ -964,40 +964,47 @@ class _SplashScreenState extends State<SplashScreen>
                   children: [
                     const Text(
                       'ٹیوشن اکیڈمی و آن لائن قرآن پورٹل',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'JameelNooriNastaleeq',
-                        fontSize: 30,
+                        fontSize: 36,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                         letterSpacing: 0.5,
+                        height: 1.4,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 4),
+                          horizontal: 18, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.12),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: const Color(0xFFFDE68A), width: 0.8),
+                        color: Colors.white.withOpacity(0.14),
+                        borderRadius: BorderRadius.circular(22),
+                        border: Border.all(color: const Color(0xFFFDE68A), width: 1.2),
                       ),
                       child: const Text(
-                        'KMB Education Suite · v1.1',
+                        'KMB Education Suite · v1.2',
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 15,
                           color: Color(0xFFFDE68A),
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.bold,
                           letterSpacing: 0.8,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'اساتذہ، اکیڈمیز، آن لائن تدریس، طلبہ اور والدین کا باوقار ڈیجیٹل ساتھی',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.white.withOpacity(0.9),
+                    const SizedBox(height: 14),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        'اساتذہ، اکیڈمیز، آن لائن تدریس، طلبہ اور والدین کا باوقار ڈیجیٹل ساتھی',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: 'JameelNooriNastaleeq',
+                          fontSize: 18,
+                          color: Colors.white.withOpacity(0.95),
+                          height: 1.5,
+                        ),
                       ),
                     ),
                   ],
@@ -1005,19 +1012,20 @@ class _SplashScreenState extends State<SplashScreen>
               ),
               const Spacer(),
               const SizedBox(
-                width: 28,
-                height: 28,
+                width: 32,
+                height: 32,
                 child: CircularProgressIndicator(
-                  strokeWidth: 2.5,
+                  strokeWidth: 3.0,
                   valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFDE68A)),
                 ),
               ),
               const SizedBox(height: 12),
               Text(
-                'ورژن 1.1.0',
+                'ورژن 1.2.0',
                 style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.white.withOpacity(0.6),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white.withOpacity(0.85),
                 ),
               ),
               const SizedBox(height: 24),
@@ -1922,6 +1930,26 @@ class _StudentsPageState extends State<StudentsPage> {
                                     onPressed: () => s.sendWhatsApp(st),
                                   ),
                                   const SizedBox(width: 6),
+                                  FilledButton.icon(
+                                    style: FilledButton.styleFrom(
+                                      backgroundColor: const Color(0xFF25D366),
+                                      foregroundColor: Colors.white,
+                                    ),
+                                    icon: const Icon(Icons.phone_in_talk_rounded, size: 16),
+                                    label: const Text('وائس کال'),
+                                    onPressed: () => CallSessionManager.instance.startCall(context, st, video: false),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  FilledButton.icon(
+                                    style: FilledButton.styleFrom(
+                                      backgroundColor: const Color(0xFF128C7E),
+                                      foregroundColor: Colors.white,
+                                    ),
+                                    icon: const Icon(Icons.videocam_rounded, size: 16),
+                                    label: const Text('ویڈیو کال'),
+                                    onPressed: () => CallSessionManager.instance.startCall(context, st, video: true),
+                                  ),
+                                  const SizedBox(width: 6),
                                   if (st.isQuranStudent) ...[
                                     FilledButton.icon(
                                       style: FilledButton.styleFrom(
@@ -2626,7 +2654,7 @@ class _GateState extends State<Gate> {
   bool loaded = false;
 
   bool showUpgradeNotice = false;
-  static const currentVersion = '1.1.0';
+  static const currentVersion = '1.2.0';
 
   @override
   void initState() {
@@ -2644,6 +2672,7 @@ class _GateState extends State<Gate> {
         loaded = true;
         showUpgradeNotice = upgraded;
       });
+      WidgetsBinding.instance.addPostFrameCallback((_) => checkForAppUpdate(context));
     });
   }
 
@@ -2723,7 +2752,7 @@ class _GateState extends State<Gate> {
                               ),
                               SizedBox(height: 2),
                               Text(
-                                'نئے فونٹس (جمیل نوری نستعلیق)، رنگین تجویدی قرآن، انگریزی ترجمہ اور مستقل کنیکٹیویٹی شامل کر دی گئی ہے۔',
+                                'نئے فونٹس (جمیل نوری نستعلیق)، تجویدی قرآن، انگریزی ترجمہ اور مستقل کنیکٹیویٹی شامل کر دی گئی ہے۔',
                                 style: TextStyle(fontSize: 12, color: Color(0xFF78350F)),
                               ),
                             ],
@@ -2768,7 +2797,7 @@ class _GateState extends State<Gate> {
                 const SizedBox(height: 14),
                 _roleCard(
                   icon: Icons.menu_book_rounded,
-                  title: '📖 مکمل رنگین قرآن پاک (Quran Reader)',
+                  title: '📖 مکمل قرآن پاک (Quran Reader)',
                   subtitle:
                       '114 سورتیں، 30 پارے، نورانی قاعدہ اور 3 مختلف رسم الخط (مفت بلا لاگ اِن)',
                   color: const Color(0xFFD97706),
@@ -2983,9 +3012,10 @@ class _StudentHomeState extends State<StudentHome> {
   }
 
   Future<void> loadQa(String c) async {
+    final cleanCode = c.toLowerCase().trim();
     try {
       final r = await Supabase.instance.client
-          .rpc('get_questions', params: {'p_code': c});
+          .rpc('get_questions', params: {'p_code': cleanCode});
       if (mounted && r != null && (r as List).isNotEmpty) {
         setState(() => qa = List.from(r));
         return;
@@ -2995,39 +3025,97 @@ class _StudentHomeState extends State<StudentHome> {
       final r = await Supabase.instance.client
           .from('questions')
           .select('*')
-          .eq('code', c.toLowerCase().trim())
+          .eq('code', cleanCode)
           .order('created_at', ascending: false)
           .limit(30);
-      if (mounted) setState(() => qa = List.from(r));
+      if (mounted && (r as List).isNotEmpty) {
+        setState(() => qa = List.from(r));
+        return;
+      }
+    } catch (_) {}
+    // Robust snapshots table fallback
+    try {
+      final res = await Supabase.instance.client
+          .from('snapshots')
+          .select('data')
+          .eq('code', cleanCode)
+          .maybeSingle();
+      if (res != null && res['data'] != null) {
+        final d = Map<String, dynamic>.from(res['data'] as Map);
+        final list = (d['qa'] as List?) ?? [];
+        if (mounted) setState(() => qa = List.from(list));
+      }
     } catch (_) {}
   }
 
   Future<void> ask() async {
     final c = code, q = qCtl.text.trim();
     if (c == null || q.isEmpty) return;
+    final nowIso = DateTime.now().toUtc().toIso8601String();
+    final cleanCode = c.toLowerCase().trim();
+    bool sent = false;
+
+    // 1. Try questions table / RPC
     try {
+      await Supabase.instance.client
+          .rpc('ask_question', params: {'p_code': cleanCode, 'p_q': q});
+      sent = true;
+    } catch (_) {
       try {
-        await Supabase.instance.client
-            .rpc('ask_question', params: {'p_code': c, 'p_q': q});
-      } catch (_) {
         await Supabase.instance.client.from('questions').insert({
-          'code': c.toLowerCase().trim(),
+          'code': cleanCode,
           'q': q,
-          'created_at': DateTime.now().toUtc().toIso8601String(),
+          'created_at': nowIso,
         });
+        sent = true;
+      } catch (_) {}
+    }
+
+    // 2. Always persist into snapshots table as well
+    try {
+      final res = await Supabase.instance.client
+          .from('snapshots')
+          .select('data')
+          .eq('code', cleanCode)
+          .maybeSingle();
+
+      Map<String, dynamic> snapData = {};
+      if (res != null && res['data'] != null) {
+        snapData = Map<String, dynamic>.from(res['data'] as Map);
       }
+      List<dynamic> existingQa = List.from(snapData['qa'] ?? []);
+      existingQa.insert(0, {
+        'id': DateTime.now().millisecondsSinceEpoch.toString(),
+        'code': cleanCode,
+        'q': q,
+        'a': null,
+        'created_at': nowIso,
+      });
+      snapData['qa'] = existingQa;
+
+      await Supabase.instance.client.from('snapshots').upsert({
+        'code': cleanCode,
+        'data': snapData,
+        'updated_at': nowIso,
+      });
+      sent = true;
+    } catch (_) {}
+
+    if (sent) {
       qCtl.clear();
       await loadQa(c);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                backgroundColor: Color(0xFF0F7B5F),
-                content: Text('آپ کا سوال استاد کو کامیابی سے بھیج دیا گیا ہے')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          backgroundColor: Color(0xFF0F7B5F),
+          content: Text('آپ کا سوال استاد کو کامیابی سے بھیج دیا گیا ہے'),
+        ));
       }
-    } catch (e) {
+    } else {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('سوال نہیں بھیجا جا سکا: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text('خرابی: انٹرنیٹ کنکشن چیک کریں اور دوبارہ کوشش کریں'),
+        ));
       }
     }
   }
@@ -3354,7 +3442,7 @@ class _StudentHomeState extends State<StudentHome> {
                                     backgroundColor: const Color(0xFF0F7B5F),
                                   ),
                                   icon: const Icon(Icons.menu_book_rounded),
-                                  label: const Text('📖 رنگین قرآن پاک کھولیں (سبق پڑھیں)'),
+                                  label: const Text('📖 قرآن پاک کھولیں (سبق پڑھیں)'),
                                   onPressed: () => Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -3525,12 +3613,36 @@ class _StudentHomeState extends State<StudentHome> {
                                   ),
                                 ),
                                 if ((snap?['centerPhone'] ?? '').toString().isNotEmpty) ...[
-                                  const SizedBox(width: 8),
+                                  const SizedBox(width: 6),
+                                  FilledButton.icon(
+                                    style: FilledButton.styleFrom(backgroundColor: const Color(0xFF25D366), foregroundColor: Colors.white),
+                                    icon: const Icon(Icons.phone_in_talk_rounded, size: 16),
+                                    label: const Text('وائس کال'),
+                                    onPressed: () {
+                                      final p = snap!['centerPhone'].toString().replaceAll(RegExp(r'\D'), '');
+                                      final name = snap!['name'] ?? '';
+                                      final fakeStudent = Student('s_temp', name, p, 0, code ?? '');
+                                      CallSessionManager.instance.startCall(context, fakeStudent, video: false);
+                                    },
+                                  ),
+                                  const SizedBox(width: 6),
+                                  FilledButton.icon(
+                                    style: FilledButton.styleFrom(backgroundColor: const Color(0xFF128C7E), foregroundColor: Colors.white),
+                                    icon: const Icon(Icons.videocam_rounded, size: 16),
+                                    label: const Text('ویڈیو کال'),
+                                    onPressed: () {
+                                      final p = snap!['centerPhone'].toString().replaceAll(RegExp(r'\D'), '');
+                                      final name = snap!['name'] ?? '';
+                                      final fakeStudent = Student('s_temp', name, p, 0, code ?? '');
+                                      CallSessionManager.instance.startCall(context, fakeStudent, video: true);
+                                    },
+                                  ),
+                                  const SizedBox(width: 6),
                                   OutlinedButton.icon(
                                     style: OutlinedButton.styleFrom(
                                       foregroundColor: Colors.green.shade700,
                                     ),
-                                    icon: const Icon(Icons.chat_bubble_outline_rounded, color: Colors.green),
+                                    icon: const Icon(Icons.chat_bubble_outline_rounded, color: Colors.green, size: 16),
                                     label: const Text('واٹس ایپ'),
                                     onPressed: () {
                                       final p = snap!['centerPhone'].toString().replaceAll(RegExp(r'\D'), '');
@@ -3731,7 +3843,7 @@ class _MorePageState extends State<MorePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'مکمل رنگین قرآن پاک ریڈر',
+                        'مکمل قرآن پاک ریڈر',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -4080,9 +4192,10 @@ class _ParentHomeState extends State<ParentHome> {
   }
 
   Future<void> loadQa(String c) async {
+    final cleanCode = c.toLowerCase().trim();
     try {
       final r = await Supabase.instance.client
-          .rpc('get_questions', params: {'p_code': c});
+          .rpc('get_questions', params: {'p_code': cleanCode});
       if (mounted && code == c && r != null && (r as List).isNotEmpty) {
         setState(() => qa = List.from(r));
         return;
@@ -4092,38 +4205,97 @@ class _ParentHomeState extends State<ParentHome> {
       final r = await Supabase.instance.client
           .from('questions')
           .select('*')
-          .eq('code', c.toLowerCase().trim())
+          .eq('code', cleanCode)
           .order('created_at', ascending: false)
           .limit(30);
-      if (mounted && code == c) setState(() => qa = List.from(r));
+      if (mounted && code == c && (r as List).isNotEmpty) {
+        setState(() => qa = List.from(r));
+        return;
+      }
+    } catch (_) {}
+    // Robust snapshots table fallback
+    try {
+      final res = await Supabase.instance.client
+          .from('snapshots')
+          .select('data')
+          .eq('code', cleanCode)
+          .maybeSingle();
+      if (res != null && res['data'] != null) {
+        final d = Map<String, dynamic>.from(res['data'] as Map);
+        final list = (d['qa'] as List?) ?? [];
+        if (mounted && code == c) setState(() => qa = List.from(list));
+      }
     } catch (_) {}
   }
 
   Future<void> ask() async {
     final c = code, q = qCtl.text.trim();
     if (c == null || q.isEmpty) return;
+    final nowIso = DateTime.now().toUtc().toIso8601String();
+    final cleanCode = c.toLowerCase().trim();
+    bool sent = false;
+
+    // 1. Try questions table / RPC
     try {
+      await Supabase.instance.client
+          .rpc('ask_question', params: {'p_code': cleanCode, 'p_q': q});
+      sent = true;
+    } catch (_) {
       try {
-        await Supabase.instance.client
-            .rpc('ask_question', params: {'p_code': c, 'p_q': q});
-      } catch (_) {
         await Supabase.instance.client.from('questions').insert({
-          'code': c.toLowerCase().trim(),
+          'code': cleanCode,
           'q': q,
-          'created_at': DateTime.now().toUtc().toIso8601String(),
+          'created_at': nowIso,
         });
+        sent = true;
+      } catch (_) {}
+    }
+
+    // 2. Always persist into snapshots table as well
+    try {
+      final res = await Supabase.instance.client
+          .from('snapshots')
+          .select('data')
+          .eq('code', cleanCode)
+          .maybeSingle();
+
+      Map<String, dynamic> snapData = {};
+      if (res != null && res['data'] != null) {
+        snapData = Map<String, dynamic>.from(res['data'] as Map);
       }
+      List<dynamic> existingQa = List.from(snapData['qa'] ?? []);
+      existingQa.insert(0, {
+        'id': DateTime.now().millisecondsSinceEpoch.toString(),
+        'code': cleanCode,
+        'q': q,
+        'a': null,
+        'created_at': nowIso,
+      });
+      snapData['qa'] = existingQa;
+
+      await Supabase.instance.client.from('snapshots').upsert({
+        'code': cleanCode,
+        'data': snapData,
+        'updated_at': nowIso,
+      });
+      sent = true;
+    } catch (_) {}
+
+    if (sent) {
       qCtl.clear();
       await loadQa(c);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            backgroundColor: Color(0xFF0F7B5F),
-            content: Text('آپ کا سوال استاد کو بھیج دیا گیا ہے')));
+          backgroundColor: Color(0xFF0F7B5F),
+          content: Text('آپ کا سوال استاد کو کامیابی سے بھیج دیا گیا ہے'),
+        ));
       }
-    } catch (e) {
+    } else {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('سوال نہیں بھیجا جا سکا: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text('خرابی: انٹرنیٹ کنکشن چیک کریں اور دوبارہ کوشش کریں'),
+        ));
       }
     }
   }
@@ -4714,12 +4886,36 @@ class _ParentHomeState extends State<ParentHome> {
                                     ),
                                   ),
                                   if (code != null && (snaps[code]?['centerPhone'] ?? '').toString().isNotEmpty) ...[
-                                    const SizedBox(width: 8),
+                                    const SizedBox(width: 6),
+                                    FilledButton.icon(
+                                      style: FilledButton.styleFrom(backgroundColor: const Color(0xFF25D366), foregroundColor: Colors.white),
+                                      icon: const Icon(Icons.phone_in_talk_rounded, size: 16),
+                                      label: const Text('وائس کال'),
+                                      onPressed: () {
+                                        final p = snaps[code]!['centerPhone'].toString().replaceAll(RegExp(r'\D'), '');
+                                        final name = snaps[code]!['name'] ?? '';
+                                        final fakeStudent = Student('s_temp', name, p, 0, code ?? '');
+                                        CallSessionManager.instance.startCall(context, fakeStudent, video: false);
+                                      },
+                                    ),
+                                    const SizedBox(width: 6),
+                                    FilledButton.icon(
+                                      style: FilledButton.styleFrom(backgroundColor: const Color(0xFF128C7E), foregroundColor: Colors.white),
+                                      icon: const Icon(Icons.videocam_rounded, size: 16),
+                                      label: const Text('ویڈیو کال'),
+                                      onPressed: () {
+                                        final p = snaps[code]!['centerPhone'].toString().replaceAll(RegExp(r'\D'), '');
+                                        final name = snaps[code]!['name'] ?? '';
+                                        final fakeStudent = Student('s_temp', name, p, 0, code ?? '');
+                                        CallSessionManager.instance.startCall(context, fakeStudent, video: true);
+                                      },
+                                    ),
+                                    const SizedBox(width: 6),
                                     OutlinedButton.icon(
                                       style: OutlinedButton.styleFrom(
                                         foregroundColor: Colors.green.shade700,
                                       ),
-                                      icon: const Icon(Icons.chat_bubble_outline_rounded, color: Colors.green),
+                                      icon: const Icon(Icons.chat_bubble_outline_rounded, color: Colors.green, size: 16),
                                       label: const Text('واٹس ایپ'),
                                       onPressed: () {
                                         final p = snaps[code]!['centerPhone'].toString().replaceAll(RegExp(r'\D'), '');
@@ -5174,19 +5370,48 @@ class _QuestionsPageState extends State<QuestionsPage> {
   }
 
   Future<void> load() async {
+    final Map<String, Map<String, dynamic>> map = {};
     try {
       final r = await Supabase.instance.client
           .from('questions')
           .select('id,code,q,a,created_at')
           .order('created_at', ascending: false)
           .limit(50);
-      setState(() {
-        rows = List<Map<String, dynamic>>.from(r);
-        msg = rows.isEmpty ? 'کوئی سوال نہیں' : '';
-      });
-    } catch (e) {
-      setState(() => msg = 'خرابی: $e');
-    }
+      for (final item in r) {
+        final m = Map<String, dynamic>.from(item);
+        final k = '${m['code']}_${m['q']}';
+        map[k] = m;
+      }
+    } catch (_) {}
+
+    // Load from snapshots table
+    try {
+      final snapRows = await Supabase.instance.client
+          .from('snapshots')
+          .select('code,data');
+      for (final row in snapRows) {
+        final c = (row['code'] ?? '').toString();
+        final d = Map<String, dynamic>.from(row['data'] as Map? ?? {});
+        final qList = d['qa'] as List?;
+        if (qList != null) {
+          for (final qItem in qList) {
+            final m = Map<String, dynamic>.from(qItem as Map);
+            m['code'] = c;
+            final k = '${c}_${m['q']}';
+            if (!map.containsKey(k)) {
+              map[k] = m;
+            }
+          }
+        }
+      }
+    } catch (_) {}
+
+    final list = map.values.toList();
+    list.sort((a, b) => (b['created_at'] ?? '').toString().compareTo((a['created_at'] ?? '').toString()));
+    setState(() {
+      rows = list;
+      msg = rows.isEmpty ? 'کوئی نیا سوال یا پیغام موصول نہیں ہوا' : '';
+    });
   }
 
   Student? findStudent(String code) {
@@ -5228,21 +5453,44 @@ class _QuestionsPageState extends State<QuestionsPage> {
       ),
     );
     if (ok == true && c.text.trim().isNotEmpty) {
+      final answerText = c.text.trim();
+      final nowIso = DateTime.now().toUtc().toIso8601String();
       try {
         await Supabase.instance.client.from('questions').update({
-          'a': c.text.trim(),
-          'answered_at': DateTime.now().toUtc().toIso8601String(),
+          'a': answerText,
+          'answered_at': nowIso,
         }).eq('id', r['id']);
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              backgroundColor: Color(0xFF0F7B5F),
-              content: Text('جواب کامیابی سے محفوظ اور بھیج دیا گیا ہے')));
+      } catch (_) {}
+
+      // Update snapshots table as well
+      try {
+        final cleanCode = (r['code'] ?? '').toString().toLowerCase().trim();
+        final res = await Supabase.instance.client
+            .from('snapshots')
+            .select('data')
+            .eq('code', cleanCode)
+            .maybeSingle();
+        if (res != null && res['data'] != null) {
+          final snapData = Map<String, dynamic>.from(res['data'] as Map);
+          final qList = (snapData['qa'] as List?) ?? [];
+          for (final item in qList) {
+            final m = item as Map;
+            if (m['q'] == r['q']) {
+              m['a'] = answerText;
+              m['answered_at'] = nowIso;
+            }
+          }
+          await Supabase.instance.client.from('snapshots').update({
+            'data': snapData,
+            'updated_at': nowIso,
+          }).eq('code', cleanCode);
         }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('خرابی: $e')));
-        }
+      } catch (_) {}
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            backgroundColor: Color(0xFF0F7B5F),
+            content: Text('جواب کامیابی سے محفوظ اور بھیج دیا گیا ہے')));
       }
       load();
     }
@@ -5567,6 +5815,436 @@ class _DocPageState extends State<DocPage> {
           ),
         ]),
       ),
+    );
+  }
+}
+
+
+// ============================================================================
+// 1. WhatsApp Voice & Video Call Session Manager with Live Duration & Quran Mode
+// ============================================================================
+class CallSessionManager {
+  static final CallSessionManager instance = CallSessionManager._();
+  CallSessionManager._();
+
+  Student? activeStudent;
+  DateTime? callStartTime;
+  Timer? _timer;
+  int elapsedSeconds = 0;
+  final ValueNotifier<int> durationNotifier = ValueNotifier<int>(0);
+  bool isVideoCall = false;
+
+  void startCall(BuildContext context, Student student, {bool video = false}) async {
+    activeStudent = student;
+    isVideoCall = video;
+    callStartTime = DateTime.now();
+    elapsedSeconds = 0;
+    durationNotifier.value = 0;
+
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (t) {
+      elapsedSeconds++;
+      durationNotifier.value = elapsedSeconds;
+    });
+
+    // Launch WhatsApp
+    var p = student.phone.replaceAll(RegExp(r'\D'), '');
+    if (p.startsWith('0')) p = '92${p.substring(1)}';
+    final callType = video ? 'ویڈیو کال (Video Call)' : 'وائس کال (Voice Call)';
+    final msg = 'السلام علیکم ورحمۃ اللہ!\nآن لائن کلاس / قرآن پاک تلاوت: استاد $callType شروع کر رہے ہیں، برائے مہربانی کال اٹھائیں۔';
+    final uri = Uri.parse('https://wa.me/$p?text=${Uri.encodeComponent(msg)}');
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+
+    // Show floating Active Call bottom banner / dialog with Quran & End buttons
+    _showActiveCallOverlay(context);
+  }
+
+  void _showActiveCallOverlay(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isDismissible: true,
+      enableDrag: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => _ActiveCallSheet(
+        student: activeStudent!,
+        isVideo: isVideoCall,
+        durationNotifier: durationNotifier,
+        onEndCall: () => endCall(context),
+      ),
+    );
+  }
+
+  void endCall(BuildContext context) {
+    _timer?.cancel();
+    final duration = elapsedSeconds;
+    final st = activeStudent;
+    activeStudent = null;
+    elapsedSeconds = 0;
+
+    if (st == null) return;
+
+    final mins = duration ~/ 60;
+    final secs = duration % 60;
+    final durationStr = mins > 0 ? '$mins منٹ $secs سیکنڈ' : '$secs سیکنڈ';
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (d) => _CallSummaryDialog(
+        student: st,
+        durationStr: durationStr,
+        isVideo: isVideoCall,
+      ),
+    );
+  }
+}
+
+class _ActiveCallSheet extends StatelessWidget {
+  final Student student;
+  final bool isVideo;
+  final ValueNotifier<int> durationNotifier;
+  final VoidCallback onEndCall;
+
+  const _ActiveCallSheet({
+    required this.student,
+    required this.isVideo,
+    required this.durationNotifier,
+    required this.onEndCall,
+  });
+
+  String _formatDuration(int totalSecs) {
+    final m = totalSecs ~/ 60;
+    final s = totalSecs % 60;
+    return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF064E3B),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: const [
+          BoxShadow(color: Colors.black26, blurRadius: 16, offset: Offset(0, 4)),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: isVideo ? Colors.tealAccent.shade700 : const Color(0xFF25D366),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isVideo ? Icons.videocam_rounded : Icons.phone_in_talk_rounded,
+                  color: Colors.white,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'کال جاری ہے: ${student.name}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    ValueListenableBuilder<int>(
+                      valueListenable: durationNotifier,
+                      builder: (_, secs, __) => Text(
+                        'دورانیہ: ${_formatDuration(secs)}',
+                        style: const TextStyle(
+                          color: Color(0xFFFDE68A),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.close_rounded, color: Colors.white70),
+                tooltip: 'چھپائیں (کال پس منظر میں جاری رہے گی)',
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton.icon(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFFFDE68A),
+                    foregroundColor: const Color(0xFF042F2E),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  icon: const Icon(Icons.menu_book_rounded, size: 18),
+                  label: const Text(
+                    '📖 قرآن پاک کھولیں (سبق سنیں)',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context); // close sheet
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const QuranReaderScreen()),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 10),
+              FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.redAccent.shade700,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                ),
+                icon: const Icon(Icons.call_end_rounded, size: 18),
+                label: const Text(
+                  'کال ختم کریں',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  onEndCall();
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CallSummaryDialog extends StatelessWidget {
+  final Student student;
+  final String durationStr;
+  final bool isVideo;
+
+  const _CallSummaryDialog({
+    required this.student,
+    required this.durationStr,
+    required this.isVideo,
+  });
+
+  void _sendDurationWhatsApp(BuildContext context) {
+    var p = student.phone.replaceAll(RegExp(r'\D'), '');
+    if (p.startsWith('0')) p = '92${p.substring(1)}';
+    final now = DateTime.now();
+    final callType = isVideo ? 'آن لائن ویڈیو کلاس' : 'آن لائن وائس کلاس / تلاوت';
+    final msg = '''السلام علیکم ورحمۃ اللہ!
+محترم والدین / طالب علم ${student.name}!
+آج بتاریخ ${now.day}/${now.month}/${now.year} $callType کامیابی سے مکمل ہوئی۔
+⏱️ کال دورانیہ: $durationStr
+
+بارک اللہ فیکم و جزاکم اللہ خيراً۔
+— ٹیوشن و قرآن اکیڈمی''';
+
+    final uri = Uri.parse('https://wa.me/$p?text=${Uri.encodeComponent(msg)}');
+    launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Row(
+        children: const [
+          Icon(Icons.check_circle_rounded, color: Color(0xFF0F7B5F), size: 28),
+          SizedBox(width: 10),
+          Text('کال کامیابی سے مکمل ہوئی', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        ],
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFF0F766E).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFF0F766E).withValues(alpha: 0.3)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.timer_outlined, color: Color(0xFF0F766E), size: 28),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('طالب علم: ${student.name}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                      Text('کل دورانیہ: $durationStr', style: const TextStyle(color: Color(0xFF0F766E), fontWeight: FontWeight.bold, fontSize: 15)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'کیا آپ والدین اور طالب علم کو کال کے دورانیے کا خودکار واٹس ایپ میسج بھیجنا چاہتے ہیں؟',
+            style: TextStyle(fontSize: 13, color: Colors.black87),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('چھوڑ دیں (Skip)'),
+        ),
+        FilledButton.icon(
+          style: FilledButton.styleFrom(
+            backgroundColor: const Color(0xFF25D366),
+            foregroundColor: Colors.white,
+          ),
+          icon: const Icon(Icons.send_rounded, size: 16),
+          label: const Text('واٹس ایپ میسج بھیجیں'),
+          onPressed: () {
+            _sendDurationWhatsApp(context);
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+// ============================================================================
+// 2. Auto App Update Check from Vercel version.json
+// ============================================================================
+Future<void> checkForAppUpdate(BuildContext context) async {
+  try {
+    final client = HttpClient();
+    client.connectionTimeout = const Duration(seconds: 4);
+    final req = await client.getUrl(Uri.parse('https://kmb-teacher.vercel.app/version.json'));
+    final res = await req.close();
+    if (res.statusCode == 200) {
+      final text = await res.transform(utf8.decoder).join();
+      final data = jsonDecode(text) as Map<String, dynamic>;
+      final remoteVersion = data['version'] as String? ?? '1.0.0';
+      const localVersion = '1.1.0';
+
+      if (_isVersionGreater(remoteVersion, localVersion) && context.mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (d) => _AppUpdateDialog(updateData: data),
+        );
+      }
+    }
+  } catch (_) {}
+}
+
+bool _isVersionGreater(String remote, String local) {
+  final r = remote.split('.').map((e) => int.tryParse(e) ?? 0).toList();
+  final l = local.split('.').map((e) => int.tryParse(e) ?? 0).toList();
+  for (int i = 0; i < max(r.length, l.length); i++) {
+    final rv = i < r.length ? r[i] : 0;
+    final lv = i < l.length ? l[i] : 0;
+    if (rv > lv) return true;
+    if (rv < lv) return false;
+  }
+  return false;
+}
+
+class _AppUpdateDialog extends StatelessWidget {
+  final Map<String, dynamic> updateData;
+  const _AppUpdateDialog({required this.updateData});
+
+  @override
+  Widget build(BuildContext context) {
+    final ver = updateData['version'] ?? '1.2.0';
+    final notes = updateData['notes_ur'] ?? 'نئی خصوصیات اور اصلاحات شامل کی گئی ہیں۔';
+    final downloadUrl = updateData['apk_url'] ?? 'https://kmb-teacher.vercel.app/TuitionManager.apk';
+
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      title: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF0F766E).withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.system_update_rounded, color: Color(0xFF0F766E), size: 28),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('نیا ورژن دستیاب ہے!', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+                Text('ورژن: $ver', style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+              ],
+            ),
+          ),
+        ],
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.amber.shade50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.amber.shade200),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('تازہ ترین تبدیلیاں:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF92400E))),
+                const SizedBox(height: 4),
+                Text(
+                  notes,
+                  style: const TextStyle(fontSize: 12.5, color: Color(0xFF78350F), height: 1.5),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'بہترین کارکردگی کے لیے نیا ورژن ابھی ڈاؤن لوڈ کر کے انسٹال کریں۔',
+            style: TextStyle(fontSize: 12, color: Colors.black54),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('بعد میں'),
+        ),
+        FilledButton.icon(
+          style: FilledButton.styleFrom(
+            backgroundColor: const Color(0xFF0F766E),
+            foregroundColor: Colors.white,
+          ),
+          icon: const Icon(Icons.download_rounded, size: 18),
+          label: const Text('ابھی اپڈیٹ کریں (ڈاؤن لوڈ APK)'),
+          onPressed: () {
+            launchUrl(Uri.parse(downloadUrl), mode: LaunchMode.externalApplication);
+            Navigator.pop(context);
+          },
+        ),
+      ],
     );
   }
 }

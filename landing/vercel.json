@@ -1,45 +1,50 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/(.*)\\.apk",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/vnd.android.package-archive"
+        },
+        {
+          "key": "Content-Disposition",
+          "value": "attachment; filename=\"TuitionManager.apk\""
+        }
+      ]
+    }
+  ],
   "redirects": [
     {
       "source": "/download",
-      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/TuitionManager.apk",
+      "destination": "/TuitionManager.apk",
       "permanent": false
     },
     {
       "source": "/download/tuition",
-      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/TuitionManager.apk",
-      "permanent": false
-    },
-    {
-      "source": "/download/tuitionmanager",
-      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/TuitionManager.apk",
-      "permanent": false
-    },
-    {
-      "source": "/TuitionManager.apk",
-      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/TuitionManager.apk",
+      "destination": "/TuitionManager.apk",
       "permanent": false
     },
     {
       "source": "/tuitionmanager.apk",
-      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/TuitionManager.apk",
+      "destination": "/TuitionManager.apk",
       "permanent": false
     },
     {
       "source": "/tuition.apk",
-      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/TuitionManager.apk",
+      "destination": "/TuitionManager.apk",
       "permanent": false
     },
     {
       "source": "/app.apk",
-      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/TuitionManager.apk",
+      "destination": "/TuitionManager.apk",
       "permanent": false
     },
     {
       "source": "/apk",
-      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/TuitionManager.apk",
+      "destination": "/TuitionManager.apk",
       "permanent": false
     },
     {

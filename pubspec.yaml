@@ -1,7 +1,7 @@
 name: tuition_manager
 description: Tuition center manager - attendance, fees, daily lesson notes, WhatsApp updates for parents.
 publish_to: 'none'
-version: 1.1.0+2
+version: 1.2.0+3
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
