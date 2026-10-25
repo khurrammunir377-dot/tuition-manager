@@ -3,9 +3,9 @@
   "build_number": 3,
   "release_date": "2026-10-25",
   "min_required_version": "1.0.0",
-  "title_ur": "نیا ورژن دستیاب ہے! (v1.2.0)",
+  "title_ur": "نیا اپ ڈیٹ دستیاب ہے! (v1.2.0)",
   "title_en": "New Update Available! (v1.2.0)",
-  "notes_ur": "• واٹس ایپ وائس و ویڈیو کال بٹن اور کال دورانیہ رپورٹ\n• تلاوت کے دوران تیز سکرول بار اور فوری بٹن\n• درون ایپ سوالات و پیغامات کی خودکار ترسیل\n• سپلیش اور قرآن پاک ٹیبز کے بڑے خوبصورت فونٹس",
-  "notes_en": "• Direct WhatsApp Voice & Video Call with duration log\n• Smooth Quran scrolling with fast draggable scrollbar\n• In-app Q&A messaging fix\n• Larger fonts for Splash screen and Quran tabs",
+  "notes_ur": "• طلبہ ٹیب کا نیا خوبصورت ڈیزائن اور ڈپلیکیٹ بٹنوں کا خاتمہ\n• براہ راست سم فون کال اور واٹس ایپ کال کا نیا فیچر\n• سبق اور پیغامات ٹیب بغیر لاگ اِن کی رکاوٹ کے مکمل فعال\n• اساتذہ کے لیے طلبہ کے سوالات و پیغامات دیکھنے اور جواب دینے کا آپشن\n• طالب علم اور والدین پورٹل میں استاد کو کال ملانے کا نیا کارڈ\n• حاضری ٹیب میں حاضر سے غیر حاضر کرنے پر تصدیقی پیغام\n• ایپ کے آغاز پر زبان کے انتخاب (اردو / English) کی سہولت\n• بک مارک پر کلک کرنے سے اسی آیت پر براہ راست نیویگیشن اور ہائی لائٹ\n• قرآن پاک میں خالص عربی متن اور بڑے نستعلیق فونٹس",
+  "notes_en": "• Talba tab redesigned with clean UI and removed duplicate buttons\n• Direct SIM phone call and WhatsApp call options\n• Sabaq and Peghamat tabs working seamlessly without login barrier\n• Dedicated Q&A option in Teacher app to view & reply to student messages\n• Contact Teacher card in Student and Parent portals\n• Attendance confirmation dialog when switching from Present to Absent\n• Language selector on startup (Urdu / English)\n• Bookmark click jumps directly to the exact Ayah with golden highlight\n• Pure Arabic Quran text by default with large Nastaleeq translations",
   "apk_url": "https://kmb-teacher.vercel.app/TuitionManager.apk"
 }

@@ -725,47 +725,46 @@ class Store extends ChangeNotifier {
       };
 
   Future<String> sync() async {
-    if (!Cfg.ready) return 'پہلے config.dart میں Supabase کی کیز ڈالیں';
+    if (!Cfg.ready) return "پہلے config.dart میں Supabase کی کیز ڈالیں";
     final c = Supabase.instance.client;
-    if (c.auth.currentUser == null) return 'پہلے لاگ اِن کریں';
-    try {
-      await c.from('backups').upsert({
-        'owner': c.auth.currentUser!.id,
-        'data': toMap(),
-        'updated_at': DateTime.now().toUtc().toIso8601String(),
-      }, onConflict: 'owner');
-      if (students.isEmpty) return 'بیک اپ ہو گیا';
+    if (c.auth.currentUser != null) {
       try {
-        await c.from('snapshots').upsert(
+        await c.from("backups").upsert({
+          "owner": c.auth.currentUser!.id,
+          "data": toMap(),
+          "updated_at": DateTime.now().toUtc().toIso8601String(),
+        }, onConflict: "owner");
+      } catch (_) {}
+    }
+    if (students.isEmpty) return "سنک مکمل (کوئی طالب علم نہیں)";
+    try {
+      await c.from("snapshots").upsert(
+          students
+              .map((s) => {
+                    "code": s.code.toLowerCase().trim(),
+                    "student_id": s.id,
+                    "center": center,
+                    "data": snapshot(s),
+                    "updated_at": DateTime.now().toUtc().toIso8601String(),
+                  })
+              .toList(),
+          onConflict: "code");
+      return "تمام طلبہ کا پورٹل ڈیٹا کامیابی سے سنک ہو گیا";
+    } catch (_) {
+      try {
+        await c.from("snapshots").upsert(
             students
                 .map((s) => {
-                      'code': s.code.toLowerCase().trim(),
-                      'student_id': s.id,
-                      'center': center,
-                      'data': snapshot(s),
-                      'updated_at': DateTime.now().toUtc().toIso8601String(),
+                      "code": s.code.toLowerCase().trim(),
+                      "data": snapshot(s),
+                      "updated_at": DateTime.now().toUtc().toIso8601String(),
                     })
                 .toList(),
-            onConflict: 'code');
-      } catch (_) {
-        try {
-          await c.from('snapshots').upsert(
-              students
-                  .map((s) => {
-                        'code': s.code.toLowerCase().trim(),
-                        'data': snapshot(s),
-                        'updated_at': DateTime.now().toUtc().toIso8601String(),
-                      })
-                  .toList(),
-              onConflict: 'code');
-        } catch (_) {}
+            onConflict: "code");
+        return "طالب علم پورٹل اپ ڈیٹ ہو گیا";
+      } catch (e) {
+        return "سنک میں خرابی: $e";
       }
-      return 'سنک مکمل: ${students.length} طلبہ';
-    } catch (e) {
-      if ('$e'.contains('FREE_LIMIT')) {
-        return 'مفت پلان میں ${Cfg.freeLimit} طلبہ تک۔ پرو پلان لیں';
-      }
-      return 'سنک ناکام: $e';
     }
   }
 
@@ -1148,6 +1147,14 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               ),
+              IconButton(
+                icon: const Icon(Icons.mark_chat_unread_rounded),
+                tooltip: 'طلبہ کے سوالات و پیغامات',
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => QuestionsPage(store)),
+                ),
+              ),
               PopupMenuButton<String>(
                 icon: const Icon(Icons.more_vert_rounded),
                 tooltip: 'مزید اختیارات',
@@ -1318,6 +1325,121 @@ Widget field(TextEditingController c, String hint,
         ),
       ),
     );
+
+
+// ---------------- کال موڈل شیٹ (Call Options Modal) ----------------
+void _openCallSheet(BuildContext context, Student st) {
+  final cleanPhone = st.phone.replaceAll(RegExp(r'\D'), '');
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
+    builder: (ctx) => Container(
+      padding: const EdgeInsets.all(20),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0F766E).withOpacity(0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.phone_in_talk_rounded, color: Color(0xFF0F766E)),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${st.name} سے رابطہ',
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      st.phone.isNotEmpty ? st.phone : 'کوئی فون نمبر درج نہیں',
+                      style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.close_rounded),
+                onPressed: () => Navigator.pop(ctx),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ListTile(
+            leading: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(Icons.call_rounded, color: Colors.blue.shade700),
+            ),
+            title: const Text('براہ راست فون کال (SIM Direct Call)', style: TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: const Text('موبائل سم سے فوری کال ملائیں (کوئی انٹرنیٹ ضروری نہیں)'),
+            trailing: const Icon(Icons.chevron_left),
+            onTap: () {
+              Navigator.pop(ctx);
+              if (cleanPhone.isNotEmpty) {
+                launchUrl(Uri.parse('tel:$cleanPhone'), mode: LaunchMode.externalApplication);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('طالب علم کا فون نمبر درج نہیں ہے')));
+              }
+            },
+          ),
+          const Divider(height: 12),
+          ListTile(
+            leading: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFDCFCE7),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.phone_in_talk_rounded, color: Color(0xFF166534)),
+            ),
+            title: const Text('واٹس ایپ وائس کال (WhatsApp Voice)', style: TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: const Text('واٹس ایپ کال + دورانِ کال قرآن و حاضری سیشن ٹائمر'),
+            trailing: const Icon(Icons.chevron_left),
+            onTap: () {
+              Navigator.pop(ctx);
+              CallSessionManager.instance.startCall(context, st, video: false);
+            },
+          ),
+          const Divider(height: 12),
+          ListTile(
+            leading: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFCCFBF1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.videocam_rounded, color: Color(0xFF0F766E)),
+            ),
+            title: const Text('واٹس ایپ ویڈیو کال (WhatsApp Video)', style: TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: const Text('آن لائن تلاوت و سبق کے لیے ویڈیو کال'),
+            trailing: const Icon(Icons.chevron_left),
+            onTap: () {
+              Navigator.pop(ctx);
+              CallSessionManager.instance.startCall(context, st, video: true);
+            },
+          ),
+          const SizedBox(height: 10),
+        ],
+      ),
+    ),
+  );
+}
 
 // ---------------- طالب علم فارم (Add / Edit Student Sheet) ----------------
 void _openAddStudentSheet(BuildContext context, Store s, [Student? edit]) {
@@ -1919,110 +2041,146 @@ class _StudentsPageState extends State<StudentsPage> {
                               ),
                             ],
                             const Divider(height: 16),
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: [
-                                  FilledButton.tonalIcon(
-                                    icon: const Icon(Icons.send_rounded,
-                                        size: 16),
-                                    label: const Text('واٹس ایپ'),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: FilledButton.icon(
+                                    style: FilledButton.styleFrom(
+                                      backgroundColor: const Color(0xFF0F766E),
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(vertical: 10),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                    ),
+                                    icon: const Icon(Icons.call_rounded, size: 18),
+                                    label: const Text('کال کریں', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                                    onPressed: () => _openCallSheet(context, st),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: FilledButton.tonalIcon(
+                                    style: FilledButton.styleFrom(
+                                      backgroundColor: const Color(0xFFDCFCE7),
+                                      foregroundColor: const Color(0xFF166534),
+                                      padding: const EdgeInsets.symmetric(vertical: 10),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                    ),
+                                    icon: const Icon(Icons.send_rounded, size: 18),
+                                    label: const Text('رپورٹ / واٹس ایپ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                                     onPressed: () => s.sendWhatsApp(st),
                                   ),
-                                  const SizedBox(width: 6),
-                                  FilledButton.icon(
-                                    style: FilledButton.styleFrom(
-                                      backgroundColor: const Color(0xFF25D366),
-                                      foregroundColor: Colors.white,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                if (st.isQuranStudent) ...[
+                                  Expanded(
+                                    child: OutlinedButton.icon(
+                                      style: OutlinedButton.styleFrom(
+                                        foregroundColor: const Color(0xFF0F7B5F),
+                                        side: const BorderSide(color: Color(0xFF0F7B5F)),
+                                        padding: const EdgeInsets.symmetric(vertical: 8),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                      ),
+                                      icon: const Icon(Icons.menu_book_rounded, size: 16),
+                                      label: const Text('قرآن ڈائری', style: TextStyle(fontSize: 12)),
+                                      onPressed: () => _openQuranDiarySheet(context, s, st),
                                     ),
-                                    icon: const Icon(Icons.phone_in_talk_rounded, size: 16),
-                                    label: const Text('وائس کال'),
-                                    onPressed: () => CallSessionManager.instance.startCall(context, st, video: false),
                                   ),
-                                  const SizedBox(width: 6),
-                                  FilledButton.icon(
-                                    style: FilledButton.styleFrom(
-                                      backgroundColor: const Color(0xFF128C7E),
-                                      foregroundColor: Colors.white,
+                                  const SizedBox(width: 8),
+                                ],
+                                if (st.isOnline && st.meetingLink.isNotEmpty) ...[
+                                  Expanded(
+                                    child: OutlinedButton.icon(
+                                      style: OutlinedButton.styleFrom(
+                                        foregroundColor: Colors.indigo,
+                                        side: const BorderSide(color: Colors.indigo),
+                                        padding: const EdgeInsets.symmetric(vertical: 8),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                      ),
+                                      icon: const Icon(Icons.videocam_rounded, size: 16),
+                                      label: const Text('کلاس لنک', style: TextStyle(fontSize: 12)),
+                                      onPressed: () => launchUrl(Uri.parse(st.meetingLink), mode: LaunchMode.externalApplication),
                                     ),
-                                    icon: const Icon(Icons.videocam_rounded, size: 16),
-                                    label: const Text('ویڈیو کال'),
-                                    onPressed: () => CallSessionManager.instance.startCall(context, st, video: true),
                                   ),
-                                  const SizedBox(width: 6),
-                                  if (st.isQuranStudent) ...[
-                                    FilledButton.icon(
-                                      style: FilledButton.styleFrom(
-                                          backgroundColor:
-                                              const Color(0xFF0F7B5F)),
-                                      icon: const Icon(Icons.menu_book_rounded,
-                                          size: 16),
-                                      label: const Text('قرآن ڈائری'),
-                                      onPressed: () =>
-                                          _openQuranDiarySheet(context, s, st),
-                                    ),
-                                    const SizedBox(width: 6),
-                                  ],
-                                  if (st.isOnline &&
-                                      st.meetingLink.isNotEmpty) ...[
-                                    FilledButton.icon(
-                                      style: FilledButton.styleFrom(
-                                          backgroundColor: Colors.indigo),
-                                      icon: const Icon(Icons.videocam_rounded,
-                                          size: 16),
-                                      label: const Text('کلاس لنک'),
-                                      onPressed: () => launchUrl(
-                                          Uri.parse(st.meetingLink),
-                                          mode: LaunchMode.externalApplication),
-                                    ),
-                                    const SizedBox(width: 6),
-                                  ],
-                                  OutlinedButton.icon(
-                                    icon: const Icon(
-                                        Icons.description_outlined,
-                                        size: 16),
-                                    label: const Text('رپورٹ/رسید'),
-                                    onPressed: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (_) => DocPage(s, st))),
+                                  const SizedBox(width: 8),
+                                ],
+                                OutlinedButton.icon(
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: Colors.grey.shade800,
+                                    side: BorderSide(color: Colors.grey.shade400),
+                                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                   ),
-                                  const SizedBox(width: 6),
-                                  IconButton(
-                                    tooltip: 'ترمیم کریں',
-                                    icon: const Icon(Icons.edit_outlined),
-                                    onPressed: () =>
-                                        _openAddStudentSheet(context, s, st),
-                                  ),
-                                  IconButton(
-                                    tooltip: 'حذف کریں',
-                                    icon: const Icon(Icons.delete_outline,
-                                        color: Colors.red),
-                                    onPressed: () async {
+                                  icon: const Icon(Icons.description_outlined, size: 16),
+                                  label: const Text('رسید', style: TextStyle(fontSize: 12)),
+                                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DocPage(s, st))),
+                                ),
+                                const SizedBox(width: 4),
+                                PopupMenuButton<String>(
+                                  icon: const Icon(Icons.more_vert_rounded),
+                                  tooltip: 'مزید اختیارات',
+                                  onSelected: (val) async {
+                                    if (val == 'edit') {
+                                      _openAddStudentSheet(context, s, st);
+                                    } else if (val == 'receipt') {
+                                      Navigator.push(context, MaterialPageRoute(builder: (_) => DocPage(s, st)));
+                                    } else if (val == 'delete') {
                                       final ok = await showDialog<bool>(
                                         context: context,
                                         builder: (c) => AlertDialog(
-                                          title:
-                                              Text('${st.name} کو حذف کریں؟'),
-                                          content: const Text(
-                                              'کیا آپ واقعی اس طالب علم کا تمام ریکارڈ حذف کرنا چاہتے ہیں؟'),
+                                          title: Text('${st.name} کو حذف کریں؟'),
+                                          content: const Text('کیا آپ واقعی اس طالب علم کا تمام ریکارڈ حذف کرنا چاہتے ہیں؟'),
                                           actions: [
-                                            TextButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(c, false),
-                                                child: const Text('نہیں')),
-                                            TextButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(c, true),
-                                                child: const Text('حذف کریں')),
+                                            TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('نہیں')),
+                                            FilledButton(
+                                              style: FilledButton.styleFrom(backgroundColor: Colors.red),
+                                              onPressed: () => Navigator.pop(c, true),
+                                              child: const Text('حذف کریں'),
+                                            ),
                                           ],
                                         ),
                                       );
                                       if (ok == true) s.delStudent(st.id);
-                                    },
-                                  ),
-                                ],
-                              ),
+                                    }
+                                  },
+                                  itemBuilder: (ctx) => [
+                                    const PopupMenuItem(
+                                      value: 'edit',
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.edit_outlined, size: 18, color: Colors.blue),
+                                          SizedBox(width: 8),
+                                          Text('طالب علم میں ترمیم'),
+                                        ],
+                                      ),
+                                    ),
+                                    const PopupMenuItem(
+                                      value: 'receipt',
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.receipt_long_rounded, size: 18, color: Colors.green),
+                                          SizedBox(width: 8),
+                                          Text('مکمل فیس رسید و ریکارڈ'),
+                                        ],
+                                      ),
+                                    ),
+                                    const PopupMenuDivider(),
+                                    const PopupMenuItem(
+                                      value: 'delete',
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                                          SizedBox(width: 8),
+                                          Text('حذف کریں', style: TextStyle(color: Colors.red)),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -2187,7 +2345,33 @@ class AttendancePage extends StatelessWidget {
                   ),
                   const SizedBox(width: 6),
                   InkWell(
-                    onTap: () => s.setAtt(st.id, false),
+                    onTap: () async {
+                      if (a == true) {
+                        final ok = await showDialog<bool>(
+                          context: context,
+                          builder: (d) => AlertDialog(
+                            title: const Text('غیر حاضر کی تصدیق'),
+                            content: Text(
+                                'کیا آپ واقعی "${st.name}" کو "غیر حاضر" مارک کرنا چاہتے ہیں؟'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(d, false),
+                                child: const Text('نہیں'),
+                              ),
+                              FilledButton(
+                                style: FilledButton.styleFrom(
+                                    backgroundColor: Colors.red.shade700),
+                                onPressed: () => Navigator.pop(d, true),
+                                child: const Text('غیر حاضر کریں'),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (ok == true) s.setAtt(st.id, false);
+                      } else {
+                        s.setAtt(st.id, false);
+                      }
+                    },
                     borderRadius: BorderRadius.circular(10),
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
@@ -2500,25 +2684,27 @@ class _NotePageState extends State<NotePage> {
   }
 
   Future<void> pick(ImageSource src) async {
-    if (!Cfg.ready || Supabase.instance.client.auth.currentUser == null) {
-      snack('پہلے "پیغامات" ٹیب میں لاگ اِن کریں');
-      return;
-    }
     final x = await ImagePicker()
         .pickImage(source: src, maxWidth: 1280, imageQuality: 70);
     if (x == null) return;
     setState(() => up = true);
     try {
       final c = Supabase.instance.client;
-      final path =
-          '${c.auth.currentUser!.id}/${DateTime.now().millisecondsSinceEpoch}.jpg';
-      await c.storage.from('homework').upload(path, File(x.path),
-          fileOptions: const FileOptions(contentType: 'image/jpeg'));
-      widget.s.addHomework(
-          c.storage.from('homework').getPublicUrl(path), path, hwBatch);
-      snack('ہوم ورک لگ گیا');
-    } catch (e) {
-      snack('اپ لوڈ ناکام: $e');
+      if (Cfg.ready && c.auth.currentUser != null) {
+        final path =
+            '${c.auth.currentUser!.id}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+        await c.storage.from('homework').upload(path, File(x.path),
+            fileOptions: const FileOptions(contentType: 'image/jpeg'));
+        widget.s.addHomework(
+            c.storage.from('homework').getPublicUrl(path), path, hwBatch);
+        snack('ہوم ورک آن لائن لگ گیا');
+      } else {
+        widget.s.addHomework(x.path, x.path, hwBatch);
+        snack('ہوم ورک محفوظ ہو گیا');
+      }
+    } catch (_) {
+      widget.s.addHomework(x.path, x.path, hwBatch);
+      snack('ہوم ورک مقامی طور پر محفوظ ہو گیا');
     }
     if (mounted) setState(() => up = false);
   }
@@ -2654,6 +2840,7 @@ class _GateState extends State<Gate> {
   bool loaded = false;
 
   bool showUpgradeNotice = false;
+  String appLang = 'ur';
   static const currentVersion = '1.2.0';
 
   @override
@@ -2671,6 +2858,7 @@ class _GateState extends State<Gate> {
         role = p.getString('role');
         loaded = true;
         showUpgradeNotice = upgraded;
+        appLang = p.getString('app_lang') ?? 'ur';
       });
       WidgetsBinding.instance.addPostFrameCallback((_) => checkForAppUpdate(context));
     });
@@ -2703,6 +2891,68 @@ class _GateState extends State<Gate> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // Startup Language Picker
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.language_rounded, size: 16, color: Color(0xFF0F7B5F)),
+                      const SizedBox(width: 6),
+                      Text(appLang == 'ur' ? 'زبان منتخب کریں:' : 'Language:', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                      const SizedBox(width: 8),
+                      InkWell(
+                        onTap: () {
+                          setState(() => appLang = 'ur');
+                          SharedPreferences.getInstance().then((p) => p.setString('app_lang', 'ur'));
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: appLang == 'ur' ? const Color(0xFF0F7B5F) : Colors.transparent,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Text(
+                            'اردو',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: appLang == 'ur' ? Colors.white : Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      InkWell(
+                        onTap: () {
+                          setState(() => appLang = 'en');
+                          SharedPreferences.getInstance().then((p) => p.setString('app_lang', 'en'));
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: appLang == 'en' ? const Color(0xFF0F7B5F) : Colors.transparent,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Text(
+                            'English',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: appLang == 'en' ? Colors.white : Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
                 Container(
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
@@ -2861,6 +3111,129 @@ class _GateState extends State<Gate> {
           ),
         ),
       );
+}
+
+
+// ---------------- استاد سے رابطہ کارڈ (Teacher Contact Card Helper) ----------------
+Widget _buildTeacherContactCard(BuildContext context, {
+  required String teacherName,
+  required String centerPhone,
+  required String studentName,
+  required String studentCode,
+  required bool isParent,
+}) {
+  final cleanPhone = centerPhone.replaceAll(RegExp(r'\D'), '');
+  final displayName = teacherName.isNotEmpty ? teacherName : 'محترم استاد';
+
+  return Container(
+    margin: const EdgeInsets.only(bottom: 12),
+    padding: const EdgeInsets.all(14),
+    decoration: BoxDecoration(
+      gradient: const LinearGradient(
+        colors: [Color(0xFFF0FDF4), Color(0xFFDCFCE7)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: const Color(0xFF86EFAC)),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.04),
+          blurRadius: 6,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: const BoxDecoration(
+                color: Color(0xFF0F766E),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.support_agent_rounded, color: Colors.white, size: 22),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'استاد سے رابطہ: $displayName',
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Color(0xFF14532D)),
+                  ),
+                  Text(
+                    cleanPhone.isNotEmpty ? 'فون نمبر: $centerPhone' : 'براہ راست کال اور واٹس ایپ رابطہ',
+                    style: TextStyle(fontSize: 12, color: Colors.green.shade900),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF0F766E),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                icon: const Icon(Icons.call_rounded, size: 16),
+                label: const Text('براہ راست فون کال', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                onPressed: () {
+                  if (cleanPhone.isNotEmpty) {
+                    launchUrl(Uri.parse('tel:$cleanPhone'), mode: LaunchMode.externalApplication);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('استاد کا رابطہ نمبر ابھی درج نہیں ہوا')),
+                    );
+                  }
+                },
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF25D366),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                icon: const Icon(Icons.chat_rounded, size: 16),
+                label: const Text('واٹس ایپ رابطہ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                onPressed: () {
+                  if (cleanPhone.isNotEmpty) {
+                    var p = cleanPhone;
+                    if (p.startsWith('0')) p = '92' + p.substring(1);
+                    final intro = isParent
+                        ? 'السلام علیکم استاد محترم! میں $studentName کے والدین میں سے رابطہ کر رہا ہوں۔'
+                        : 'السلام علیکم استاد محترم! میں آپ کا طالب علم ($studentName) رابطہ کر رہا ہوں۔';
+                    launchUrl(
+                      Uri.parse('https://wa.me/$p?text=' + Uri.encodeComponent(intro)),
+                      mode: LaunchMode.externalApplication,
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('استاد کا رابطہ نمبر ابھی درج نہیں ہوا')),
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
 }
 
 // ---------------- طالب علم پورٹل (StudentHome) ----------------
@@ -3314,6 +3687,15 @@ class _StudentHomeState extends State<StudentHome> {
                       ),
                     ),
                     const SizedBox(height: 8),
+                    // Contact Teacher Card
+                    _buildTeacherContactCard(
+                      context,
+                      teacherName: (d['teacherName'] ?? '').toString(),
+                      centerPhone: (d['centerPhone'] ?? '').toString(),
+                      studentName: (d['name'] ?? '').toString(),
+                      studentCode: code ?? '',
+                      isParent: false,
+                    ),
 
                     // Online Live Class Banner
                     if (d['isOnline'] == true &&
@@ -4047,18 +4429,18 @@ class _MorePageState extends State<MorePage> {
         ),
         Card(
           child: Column(children: [
-            if (loggedIn)
-              ListTile(
-                leading: const Icon(Icons.question_answer_rounded),
-                title: Text(
-                    'والدین و طلبہ کے سوالات${qCount > 0 ? " ($qCount بغیر جواب)" : ""}'),
-                trailing: const Icon(Icons.chevron_left),
-                onTap: () async {
-                  await Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => QuestionsPage(s)));
-                  loadPlan();
-                },
-              ),
+            ListTile(
+              leading: const Icon(Icons.question_answer_rounded, color: Color(0xFF0F7B5F)),
+              title: Text(
+                  'والدین و طلبہ کے سوالات و پیغامات${qCount > 0 ? " ($qCount بغیر جواب)" : ""}'),
+              subtitle: const Text('طالب علم اور والدین کے موصولہ پیغامات دیکھیں اور جواب دیں'),
+              trailing: const Icon(Icons.chevron_left),
+              onTap: () async {
+                await Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => QuestionsPage(s)));
+                loadPlan();
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.summarize_rounded),
               title: const Text('ہفتہ وار خلاصہ (واٹس ایپ)'),
@@ -4637,6 +5019,16 @@ class _ParentHomeState extends State<ParentHome> {
                                 ))
                             .toList(),
                       ),
+                    const SizedBox(height: 8),
+                    // Contact Teacher Card
+                    _buildTeacherContactCard(
+                      context,
+                      teacherName: (d['teacherName'] ?? '').toString(),
+                      centerPhone: (d['centerPhone'] ?? '').toString(),
+                      studentName: (d['name'] ?? '').toString(),
+                      studentCode: code ?? '',
+                      isParent: true,
+                    ),
                     // Online Live Class
                     if (d['isOnline'] == true &&
                         (d['meetingLink'] ?? '').toString().isNotEmpty) ...[
@@ -5428,7 +5820,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
 
   Future<void> answer(Map<String, dynamic> r) async {
     final c = TextEditingController(text: (r['a'] as String?) ?? '');
-    final st = findStudent(r['code'] ?? '');
+    // final st = findStudent(r['code'] ?? '');
     final ok = await showDialog<bool>(
       context: context,
       builder: (d) => AlertDialog(

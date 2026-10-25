@@ -25,8 +25,8 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
   String _fontStyle = 'IndoPak'; // 'IndoPak' (standard South Asian), 'Amiri', 'Uthmani'
   String _colorTheme = 'emerald'; // 'emerald', 'amber', 'cream', 'night'
   bool _tajweedColors = true; // Authentic tajweed word/character coloring
-  bool _showUrdu = true;
-  bool _showEnglish = true;
+  bool _showUrdu = false; // Pure authentic Arabic by default!
+  bool _showEnglish = false;
   bool _isLoading = true;
   Map<String, dynamic> _allAyahs = {};
 
@@ -261,14 +261,17 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
                             setState(() {
                               _selectedSurah = sNum;
                               _targetAyah = aNum;
+                              _continuousView = false; // Card view lets us jump to the exact verse card!
                               _tabController.animateTo(2);
                             });
-                            Future.delayed(const Duration(milliseconds: 300), () {
+                            Future.delayed(const Duration(milliseconds: 350), () {
                               if (_scrollController.hasClients) {
-                                if (!_continuousView) {
-                                  final targetOffset = ((aNum - 1) * 110.0).clamp(0.0, _scrollController.position.maxScrollExtent);
-                                  _scrollController.animateTo(targetOffset, duration: const Duration(milliseconds: 400), curve: Curves.easeOut);
-                                }
+                                final targetOffset = ((aNum - 1) * 160.0).clamp(0.0, _scrollController.position.maxScrollExtent);
+                                _scrollController.animateTo(
+                                  targetOffset,
+                                  duration: const Duration(milliseconds: 550),
+                                  curve: Curves.easeOutCubic,
+                                );
                               }
                             });
                           },
@@ -1293,7 +1296,7 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
                         ],
                       ),
                       if (_showUrdu && urdu.toString().isNotEmpty) ...[
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 6),
                         Text(
                           '$urdu',
                           textAlign: TextAlign.right,
@@ -1301,20 +1304,21 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
                           style: TextStyle(
                             color: _subtextColor,
                             fontFamily: 'JameelNooriNastaleeq',
-                            fontSize: 16.5,
-                            height: 1.7,
+                            fontSize: 22.0,
+                            height: 1.9,
                           ),
                         ),
                       ],
                       if (_showEnglish && eng.toString().isNotEmpty) ...[
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 6),
                         Text(
                           '$eng',
                           textAlign: TextAlign.left,
                           textDirection: TextDirection.ltr,
                           style: TextStyle(
-                            color: Colors.blueGrey.shade700,
-                            fontSize: 12.5,
+                            color: Colors.blueGrey.shade800,
+                            fontSize: 16.0,
+                            height: 1.55,
                             fontStyle: FontStyle.italic,
                           ),
                         ),
@@ -1421,20 +1425,22 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
     final urdu = a['u'] ?? '';
     final english = a['e'] ?? '';
 
+    final isTarget = _targetAyah == ayahNum;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: _cardBg,
+        color: isTarget ? const Color(0xFFFEF3C7) : _cardBg,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isBm ? const Color(0xFFD97706) : _primaryAccent.withValues(alpha: 0.15),
-          width: isBm ? 1.5 : 1.0,
+          color: isTarget ? const Color(0xFFD97706) : (isBm ? const Color(0xFFD97706) : _primaryAccent.withValues(alpha: 0.15)),
+          width: isTarget ? 2.5 : (isBm ? 1.5 : 1.0),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 5,
+            color: isTarget ? const Color(0xFFD97706).withValues(alpha: 0.15) : Colors.black.withValues(alpha: 0.02),
+            blurRadius: isTarget ? 10 : 5,
             offset: const Offset(0, 2),
           ),
         ],
@@ -1448,13 +1454,15 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                 decoration: BoxDecoration(
-                  color: isBm ? const Color(0xFFD97706) : _primaryAccent.withValues(alpha: 0.12),
+                  color: isTarget
+                      ? const Color(0xFFB45309)
+                      : (isBm ? const Color(0xFFD97706) : _primaryAccent.withValues(alpha: 0.12)),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  'آیت $ayahNum',
+                  isTarget ? '📌 آیت $ayahNum (بک مارک)' : 'آیت $ayahNum',
                   style: TextStyle(
-                    color: isBm ? Colors.white : _primaryAccent,
+                    color: (isTarget || isBm) ? Colors.white : _primaryAccent,
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
                   ),
@@ -1510,8 +1518,8 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
               style: TextStyle(
                 color: _subtextColor,
                 fontFamily: 'JameelNooriNastaleeq',
-                fontSize: 18.0,
-                height: 1.8,
+                fontSize: 22.0,
+                height: 1.9,
               ),
             ),
           ],
@@ -1524,9 +1532,9 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
               textAlign: TextAlign.left,
               textDirection: TextDirection.ltr,
               style: TextStyle(
-                color: Colors.blueGrey.shade700,
-                fontSize: 13.5,
-                height: 1.45,
+                color: Colors.blueGrey.shade800,
+                fontSize: 16.0,
+                height: 1.55,
                 fontStyle: FontStyle.italic,
               ),
             ),
