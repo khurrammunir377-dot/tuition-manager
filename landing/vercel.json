@@ -11,7 +11,7 @@
         },
         {
           "key": "Content-Disposition",
-          "value": "attachment; filename=\"TuitionManager.apk\""
+          "value": "attachment"
         }
       ]
     }
@@ -49,52 +49,37 @@
     },
     {
       "source": "/download/downloader",
-      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/KMB_Downloader_v3.4.1_arm64.apk",
-      "permanent": false
-    },
-    {
-      "source": "/KMB_Downloader.apk",
-      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/KMB_Downloader_v3.4.1_arm64.apk",
+      "destination": "/KMB_Downloader.apk",
       "permanent": false
     },
     {
       "source": "/kmb_downloader.apk",
-      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/KMB_Downloader_v3.4.1_arm64.apk",
+      "destination": "/KMB_Downloader.apk",
       "permanent": false
     },
     {
       "source": "/downloader.apk",
-      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/KMB_Downloader_v3.4.1_arm64.apk",
+      "destination": "/KMB_Downloader.apk",
       "permanent": false
     },
     {
       "source": "/download/qalbi",
-      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/Qalbi-Release.apk",
-      "permanent": false
-    },
-    {
-      "source": "/Qalbi-Release.apk",
-      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/Qalbi-Release.apk",
+      "destination": "/Qalbi-Release.apk",
       "permanent": false
     },
     {
       "source": "/qalbi.apk",
-      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/Qalbi-Release.apk",
+      "destination": "/Qalbi-Release.apk",
       "permanent": false
     },
     {
       "source": "/download/getcarout",
-      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/GetCarOut.apk",
-      "permanent": false
-    },
-    {
-      "source": "/GetCarOut.apk",
-      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/GetCarOut.apk",
+      "destination": "/GetCarOut.apk",
       "permanent": false
     },
     {
       "source": "/getcarout.apk",
-      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.1.0/GetCarOut.apk",
+      "destination": "/GetCarOut.apk",
       "permanent": false
     }
   ],
