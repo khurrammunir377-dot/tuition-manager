@@ -26,10 +26,12 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Cfg.ready) {
     await Supabase.initialize(url: Cfg.url, anonKey: Cfg.anonKey);
-    try {
-      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-      pushReady = true;
-    } catch (_) {}
+    if (DefaultFirebaseOptions.isConfigured) {
+      try {
+        await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+        pushReady = true;
+      } catch (_) {}
+    }
   }
   runApp(const TuitionApp());
 }
@@ -1175,10 +1177,10 @@ class _HomeState extends State<Home> {
                     showAboutDialog(
                       context: context,
                       applicationName: 'ٹیوشن و قرآن مینیجر',
-                      applicationVersion: 'v1.1.0 (PRO)',
+                      applicationVersion: 'v1.2.0 (PRO)',
                       applicationIcon: const Icon(Icons.menu_book_rounded, size: 48, color: Color(0xFF0F766E)),
                       children: const [
-                        Text('اکیڈمیز، آن لائن ٹیوشن، حفظ و ناظرہ قرآن اور سکول اساتذہ کے لیے ہمہ گیر انتظامی ایپ۔\n\n© 2026 Tuition Manager'),
+                        Text('اکیڈمیز، آن لائن ٹیوشن، حفظ و ناظرہ قرآن اور سکول اساتذہ کے لیے ہمہ گیر انتظامی ایپ۔\n\n© 2026 Tuition Manager\nای میل برائے رابطہ: mkmbapps@gmail.com'),
                       ],
                     );
                   }
@@ -1326,6 +1328,33 @@ Widget field(TextEditingController c, String hint,
       ),
     );
 
+
+
+// ---------------- آن لائن کلاس لنک محفوظ اوپنر (Meeting Link Helper) ----------------
+Future<void> openMeetingLink(BuildContext context, String rawUrl) async {
+  var u = rawUrl.trim();
+  if (u.isEmpty) return;
+  if (!u.startsWith('http://') && !u.startsWith('https://')) {
+    u = 'https://$u';
+  }
+  final uri = Uri.tryParse(u);
+  if (uri != null) {
+    try {
+      final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!ok && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('کلاس کا لنک نہیں کھولا جا سکا')),
+        );
+      }
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('کلاس کا لنک درست نہیں ہے')),
+        );
+      }
+    }
+  }
+}
 
 // ---------------- کال موڈل شیٹ (Call Options Modal) ----------------
 void _openCallSheet(BuildContext context, Student st) {
@@ -2102,7 +2131,7 @@ class _StudentsPageState extends State<StudentsPage> {
                                       ),
                                       icon: const Icon(Icons.videocam_rounded, size: 16),
                                       label: const Text('کلاس لنک', style: TextStyle(fontSize: 12)),
-                                      onPressed: () => launchUrl(Uri.parse(st.meetingLink), mode: LaunchMode.externalApplication),
+                                      onPressed: () => openMeetingLink(context, st.meetingLink),
                                     ),
                                   ),
                                   const SizedBox(width: 8),
@@ -3544,7 +3573,7 @@ class _StudentHomeState extends State<StudentHome> {
                 showAboutDialog(
                   context: context,
                   applicationName: 'طالب علم پورٹل',
-                  applicationVersion: 'v1.1.0',
+                  applicationVersion: 'v1.2.0',
                   applicationIcon: const Icon(Icons.school_rounded, size: 48, color: Color(0xFF0F766E)),
                   children: const [
                     Text('روزانہ حاضری، فیس سٹیٹس، ہوم ورک اور قرآن پاک کا سبق دیکھنے کے لیے۔'),
@@ -3736,9 +3765,7 @@ class _StudentHomeState extends State<StudentHome> {
                                     backgroundColor: Colors.indigo.shade700),
                                 icon: const Icon(Icons.open_in_new, size: 16),
                                 label: const Text('شامل ہوں'),
-                                onPressed: () => launchUrl(
-                                    Uri.parse('${d['meetingLink']}'),
-                                    mode: LaunchMode.externalApplication),
+                                onPressed: () => openMeetingLink(context, '${d['meetingLink']}'),
                               ),
                             ],
                           ),
@@ -4346,16 +4373,18 @@ class _MorePageState extends State<MorePage> {
                       Text(
                           'پرو: ${Cfg.proPrice} روپے ماہانہ، لامحدود طلبہ۔\n${Cfg.payInfo}'),
                       const SizedBox(height: 8),
-                      FilledButton.tonal(
+                      FilledButton.tonalIcon(
+                        icon: const Icon(Icons.email_outlined, size: 18),
                         onPressed: () {
-                          final m = 'پرو پلان کی ادائیگی کر دی ہے۔ اکاؤنٹ: '
-                              '${Supabase.instance.client.auth.currentUser?.email}';
+                          final userEmail = Supabase.instance.client.auth.currentUser?.email ?? '';
+                          final subject = Uri.encodeComponent('ٹیوشن و قرآن مینیجر: رابطہ و پرو پلان');
+                          final body = Uri.encodeComponent('السلام علیکم!\nاکاؤنٹ ای میل: $userEmail\nپیغام / تصدیق: ');
                           launchUrl(
-                              Uri.parse(
-                                  'https://wa.me/${Cfg.adminWhatsapp}?text=${Uri.encodeComponent(m)}'),
-                              mode: LaunchMode.externalApplication);
+                            Uri.parse('mailto:${Cfg.adminEmail}?subject=$subject&body=$body'),
+                            mode: LaunchMode.externalApplication,
+                          );
                         },
-                        child: const Text('ادائیگی کی رسید واٹس ایپ پر بھیجیں'),
+                        label: const Text('رابطہ ای میل (mkmbapps@gmail.com)'),
                       ),
                     ],
                     TextButton(
@@ -4906,7 +4935,7 @@ class _ParentHomeState extends State<ParentHome> {
                 showAboutDialog(
                   context: context,
                   applicationName: 'والدین پورٹل',
-                  applicationVersion: 'v1.1.0',
+                  applicationVersion: 'v1.2.0',
                   applicationIcon: const Icon(Icons.family_restroom_rounded, size: 48, color: Color(0xFF0F766E)),
                   children: const [
                     Text('بچوں کی تعلیمی کارکردگی، حاضری، ماہانہ فیس اور قرآن مجید کے روزانہ اسباق دیکھنے کے لیے۔'),
@@ -5067,9 +5096,7 @@ class _ParentHomeState extends State<ParentHome> {
                                     backgroundColor: Colors.indigo.shade700),
                                 icon: const Icon(Icons.open_in_new, size: 16),
                                 label: const Text('شامل ہوں'),
-                                onPressed: () => launchUrl(
-                                    Uri.parse('${d['meetingLink']}'),
-                                    mode: LaunchMode.externalApplication),
+                                onPressed: () => openMeetingLink(context, '${d['meetingLink']}'),
                               ),
                             ],
                           ),
@@ -6530,7 +6557,11 @@ Future<void> checkForAppUpdate(BuildContext context) async {
       final text = await res.transform(utf8.decoder).join();
       final data = jsonDecode(text) as Map<String, dynamic>;
       final remoteVersion = data['version'] as String? ?? '1.0.0';
-      const localVersion = '1.1.0';
+      const localVersion = '1.2.0';
+
+      final p = await SharedPreferences.getInstance();
+      final lastIgnored = p.getString('dismissed_update_version');
+      if (lastIgnored == remoteVersion) return;
 
       if (_isVersionGreater(remoteVersion, localVersion) && context.mounted) {
         showDialog(
@@ -6621,7 +6652,10 @@ class _AppUpdateDialog extends StatelessWidget {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            SharedPreferences.getInstance().then((p) => p.setString('dismissed_update_version', ver));
+            Navigator.pop(context);
+          },
           child: const Text('بعد میں'),
         ),
         FilledButton.icon(

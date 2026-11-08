@@ -2,6 +2,7 @@
 import 'package:firebase_core/firebase_core.dart';
 
 class DefaultFirebaseOptions {
+  static bool get isConfigured => false;
   static FirebaseOptions get currentPlatform =>
       throw UnsupportedError('پہلے flutterfire configure چلائیں');
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -65,7 +66,7 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
   Future<void> _loadQuranText() async {
     try {
       final jsonStr = await rootBundle.loadString('assets/quran_full.json');
-      final data = jsonDecode(jsonStr) as Map<String, dynamic>;
+      final data = await compute(_parseQuranJsonMap, jsonStr);
       if (mounted) {
         setState(() {
           _allAyahs = data;
@@ -1765,3 +1766,7 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
     );
   }
 }
+
+
+// Background Isolate JSON parser for zero UI lag
+Map<String, dynamic> _parseQuranJsonMap(String str) => jsonDecode(str) as Map<String, dynamic>;
