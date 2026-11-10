@@ -1186,8 +1186,9 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'PdmsSaleemQuran',
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 26,
+                      fontWeight: FontWeight.normal,
+                      height: 1.8,
                       color: _primaryAccent,
                     ),
                   ),
@@ -1205,18 +1206,26 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
               ),
             ),
 
-            // Bismillah Banner (except Surah Taubah)
-            if (_selectedSurah != 9)
+            // Bismillah Banner (except Surah Fatiha & Surah Taubah)
+            if (_selectedSurah != 9 && _selectedSurah != 1)
               Padding(
                 padding: const EdgeInsets.only(bottom: 16),
-                child: Text(
-                  'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: _primaryAccent,
-                    fontSize: _fontSize * 0.9,
-                    fontFamily: _quranFontFamily,
-                    fontWeight: FontWeight.bold,
+                child: Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: Text(
+                    _fontStyle == 'IndoPak'
+                        ? 'بِسۡمِ اللهِ الرَّحۡمٰنِ الرَّحِيۡمِ'
+                        : 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: _primaryAccent,
+                      fontSize: _fontSize * 0.92,
+                      fontFamily: _quranFontFamily,
+                      fontWeight: _fontStyle == 'IndoPak' ? FontWeight.normal : FontWeight.bold,
+                      letterSpacing: 0.0,
+                      wordSpacing: _fontStyle == 'IndoPak' ? 3.0 : 1.0,
+                      height: 2.0,
+                    ),
                   ),
                 ),
               ),
@@ -1335,58 +1344,107 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
     );
   }
 
-  // Continuous Arabic text builder with Ayah end stops: ۝١, ۝٢ ...
+  static String _toArabicDigits(int number) {
+    const western = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    const eastern = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    var str = number.toString();
+    for (int i = 0; i < western.length; i++) {
+      str = str.replaceAll(western[i], eastern[i]);
+    }
+    return str;
+  }
+
+  Color _tajweedColorForWord(String w) {
+    if (!_tajweedColors) return _textColor;
+    if (w.contains('اللَّه') || w.contains('اللّٰه') || w.contains('لِلَّه') || w.contains('لِلّٰه') || w.contains('ٱللَّه') || w.contains('اللهِ') || w.contains('اللهُ') || w.contains('اللهَ')) {
+      return const Color(0xFFDC2626); // Crimson Red for Name of Allah
+    } else if (w.contains('ٓ') || w.contains('ۤ') || w.contains('ٰ')) {
+      return const Color(0xFF2563EB); // Sapphire Blue for Madd
+    } else if (w.contains('نّ') || w.contains('مّ') || w.contains('نَّ') || w.contains('مَّ')) {
+      return const Color(0xFF16A34A); // Tajweed Green for Ghunnah/Shaddah
+    } else if (w.contains('ۘ') || w.contains('ۚ') || w.contains('ۖ') || w.contains('ۗ') || w.contains('ؕ') || w.contains('ۙ')) {
+      return const Color(0xFFD97706); // Amber Gold for Waqf signs
+    }
+    return _textColor;
+  }
+
+  TextStyle _arabicTextStyle(Color color) {
+    return TextStyle(
+      color: color,
+      fontSize: _fontSize,
+      fontFamily: _quranFontFamily,
+      // Single-weight fonts like PdmsSaleemQuran distort & overlap when given faux-bold weights
+      fontWeight: FontWeight.normal,
+      letterSpacing: 0.0,
+      wordSpacing: _fontStyle == 'IndoPak' ? 3.5 : 1.0,
+      height: 2.3,
+    );
+  }
+
+  /// Appends word spans while merging adjacent words of the same color into single runs
+  /// so OpenType Arabic shaping and kerning work cleanly without mid-phrase breaks.
+  void _appendTajweedWordSpans(List<InlineSpan> spans, String rawText, {bool trailingSpace = true}) {
+    final cleaned = rawText.trim();
+    if (cleaned.isEmpty) return;
+
+    if (!_tajweedColors) {
+      spans.add(TextSpan(
+        text: trailingSpace ? '$cleaned ' : cleaned,
+        style: _arabicTextStyle(_textColor),
+      ));
+      return;
+    }
+
+    final words = cleaned.split(RegExp(r'\s+'));
+    Color? currentColor;
+    final buffer = StringBuffer();
+
+    for (int i = 0; i < words.length; i++) {
+      final w = words[i];
+      if (w.isEmpty) continue;
+      final wColor = _tajweedColorForWord(w);
+      if (currentColor != null && currentColor != wColor) {
+        spans.add(TextSpan(text: '$buffer ', style: _arabicTextStyle(currentColor)));
+        buffer.clear();
+      }
+      currentColor = wColor;
+      if (buffer.isNotEmpty) buffer.write(' ');
+      buffer.write(w);
+    }
+
+    if (buffer.isNotEmpty && currentColor != null) {
+      spans.add(TextSpan(
+        text: trailingSpace ? '$buffer ' : buffer.toString(),
+        style: _arabicTextStyle(currentColor),
+      ));
+    }
+  }
+
+  // Continuous Arabic text builder with crisp Amiri Ayah end stops: ﴿١﴾, ﴿٢﴾ ...
   Widget _buildContinuousArabicRichText(List ayahs, String surahName) {
     final spans = <InlineSpan>[];
 
     for (int idx = 0; idx < ayahs.length; idx++) {
       final a = Map<String, dynamic>.from(ayahs[idx]);
-      final ayahNum = a['n'] ?? (idx + 1);
+      final ayahNum = (a['n'] as num?)?.toInt() ?? (idx + 1);
       final rawText = (_fontStyle == 'IndoPak' && (a['ip'] != null))
           ? '${a['ip']}'
           : '${a['t'] ?? ""}';
 
-      // Words with tajweed coloring
-      final words = rawText.trim().split(' ');
-      for (int wIdx = 0; wIdx < words.length; wIdx++) {
-        final w = words[wIdx];
-        Color wColor = _textColor;
+      _appendTajweedWordSpans(spans, rawText, trailingSpace: true);
 
-        if (_tajweedColors) {
-          if (w.contains('اللَّه') || w.contains('اللّٰه') || w.contains('لِلَّه') || w.contains('لِلّٰه') || w.contains('ٱللَّه')) {
-            wColor = const Color(0xFFDC2626);
-          } else if (w.contains('ٓ') || w.contains('ۤ') || w.contains('ٰ')) {
-            wColor = const Color(0xFF2563EB);
-          } else if (w.contains('نّ') || w.contains('مّ') || w.contains('نَّ') || w.contains('مَّ')) {
-            wColor = const Color(0xFF16A34A);
-          } else if (w.contains('ۘ') || w.contains('ۚ') || w.contains('ۖ') || w.contains('ۗ')) {
-            wColor = const Color(0xFFD97706);
-          }
-        }
-
-        spans.add(TextSpan(
-          text: '$w ',
-          style: TextStyle(
-            color: wColor,
-            fontSize: _fontSize,
-            fontFamily: _quranFontFamily,
-            height: 2.3,
-            fontWeight: wColor != _textColor ? FontWeight.w600 : FontWeight.normal,
-          ),
-        ));
-      }
-
-      // Ultra-fast lightweight Quranic Ayah Stop marker (﴿ayahNum﴾) - no heavy WidgetSpan layout overhead!
+      // Amiri has proper advance widths for ﴿٠-٩﴾ so digits never stack at zero width
       final isBm = _isBookmarked(_selectedSurah, ayahNum);
       spans.add(TextSpan(
-        text: ' ﴿$ayahNum﴾ ',
+        text: '﴿${_toArabicDigits(ayahNum)}﴾ ',
         recognizer: TapGestureRecognizer()
           ..onTap = () => _toggleBookmark(_selectedSurah, ayahNum, surahName),
         style: TextStyle(
           color: isBm ? const Color(0xFFD97706) : _primaryAccent,
-          fontSize: _fontSize * 0.85,
-          fontWeight: FontWeight.bold,
-          fontFamily: _quranFontFamily,
+          fontSize: _fontSize * 0.84,
+          fontWeight: FontWeight.normal,
+          fontFamily: 'Amiri',
+          height: 2.3,
           backgroundColor: isBm ? const Color(0xFFFDE68A).withValues(alpha: 0.35) : null,
         ),
       ));
@@ -1394,7 +1452,8 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
 
     return Text.rich(
       TextSpan(children: spans),
-      textAlign: TextAlign.justify,
+      // Right alignment avoids Flutter RTL TextAlign.justify word-overlap distortions
+      textAlign: TextAlign.right,
     );
   }
 
@@ -1500,12 +1559,7 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
                 : Text(
                     rawText,
                     textAlign: TextAlign.right,
-                    style: TextStyle(
-                      color: _textColor,
-                      fontSize: _fontSize,
-                      fontFamily: _quranFontFamily,
-                      height: 2.1,
-                    ),
+                    style: _arabicTextStyle(_textColor),
                   ),
           ),
 
@@ -1547,45 +1601,11 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> with SingleTicker
 
   // Tajweed word/character colorizer (Allah in red, Madd in blue, etc.)
   Widget _buildColoredArabicText(String text) {
-    final words = text.split(' ');
-    final spans = <TextSpan>[];
-
-    for (int i = 0; i < words.length; i++) {
-      final w = words[i];
-      Color wColor = _textColor;
-
-      // Rule 1: The Word 'Allah' or 'Lillah' in majestic Crimson Red (Color Tajweed)
-      if (w.contains('اللَّه') || w.contains('اللّٰه') || w.contains('لِلَّه') || w.contains('لِلّٰه') || w.contains('ٱللَّه')) {
-        wColor = const Color(0xFFDC2626); // Bright Crimson Red
-      }
-      // Rule 2: Words with elongation Madd sign (ٓ or ~) in Sapphire Blue
-      else if (w.contains('ٓ') || w.contains('ۤ') || w.contains('ٰ')) {
-        wColor = const Color(0xFF2563EB); // Royal Blue
-      }
-      // Rule 3: Words with Meem / Noon Shaddah or Ghunnah in Forest Green
-      else if (w.contains('نّ') || w.contains('مّ') || w.contains('نَّ') || w.contains('مَّ')) {
-        wColor = const Color(0xFF16A34A); // Tajweed Green
-      }
-      // Rule 4: Qalqalah or ending Waqf signs in Gold / Orange
-      else if (w.contains('ۘ') || w.contains('ۚ') || w.contains('ۖ') || w.contains('ۗ')) {
-        wColor = const Color(0xFFD97706); // Amber Gold
-      }
-
-      spans.add(TextSpan(
-        text: w + (i < words.length - 1 ? ' ' : ''),
-        style: TextStyle(
-          color: wColor,
-          fontSize: _fontSize,
-          fontFamily: _quranFontFamily,
-          height: 2.1,
-          fontWeight: wColor != _textColor ? FontWeight.w600 : FontWeight.normal,
-        ),
-      ));
-    }
-
-    return RichText(
+    final spans = <InlineSpan>[];
+    _appendTajweedWordSpans(spans, text, trailingSpace: false);
+    return Text.rich(
+      TextSpan(children: spans),
       textAlign: TextAlign.right,
-      text: TextSpan(children: spans),
     );
   }
 
