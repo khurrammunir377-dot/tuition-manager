@@ -49,37 +49,117 @@
     },
     {
       "source": "/download/downloader",
-      "destination": "/KMB_Downloader.apk",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/KMB_Downloader_v4.0.5.apk",
+      "permanent": false
+    },
+    {
+      "source": "/download/kmb-downloader",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/KMB_Downloader_v4.0.5.apk",
       "permanent": false
     },
     {
       "source": "/kmb_downloader.apk",
-      "destination": "/KMB_Downloader.apk",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/KMB_Downloader_v4.0.5.apk",
       "permanent": false
     },
     {
       "source": "/downloader.apk",
-      "destination": "/KMB_Downloader.apk",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/KMB_Downloader_v4.0.5.apk",
       "permanent": false
     },
     {
       "source": "/download/qalbi",
-      "destination": "/Qalbi-Release.apk",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/Qalbi-v1.0.9-release.apk",
       "permanent": false
     },
     {
       "source": "/qalbi.apk",
-      "destination": "/Qalbi-Release.apk",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/Qalbi-v1.0.9-release.apk",
       "permanent": false
     },
     {
       "source": "/download/getcarout",
-      "destination": "/GetCarOut.apk",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/GetCarOut.apk",
       "permanent": false
     },
     {
       "source": "/getcarout.apk",
-      "destination": "/GetCarOut.apk",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/GetCarOut.apk",
+      "permanent": false
+    },
+    {
+      "source": "/download/bol-english",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/BolEnglish.apk",
+      "permanent": false
+    },
+    {
+      "source": "/download/bolenglish",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/BolEnglish.apk",
+      "permanent": false
+    },
+    {
+      "source": "/bolenglish.apk",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/BolEnglish.apk",
+      "permanent": false
+    },
+    {
+      "source": "/download/tailor-pro",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/TailorPro.apk",
+      "permanent": false
+    },
+    {
+      "source": "/download/tailorpro",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/TailorPro.apk",
+      "permanent": false
+    },
+    {
+      "source": "/tailorpro.apk",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/TailorPro.apk",
+      "permanent": false
+    },
+    {
+      "source": "/download/spark-iq",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/Spark-IQ.apk",
+      "permanent": false
+    },
+    {
+      "source": "/download/sparkiq",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/Spark-IQ.apk",
+      "permanent": false
+    },
+    {
+      "source": "/sparkiq.apk",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/Spark-IQ.apk",
+      "permanent": false
+    },
+    {
+      "source": "/download/haunted-escape",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/HauntedEscape.apk",
+      "permanent": false
+    },
+    {
+      "source": "/download/hauntedescape",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/HauntedEscape.apk",
+      "permanent": false
+    },
+    {
+      "source": "/hauntedescape.apk",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/HauntedEscape.apk",
+      "permanent": false
+    },
+    {
+      "source": "/download/wordpitch3d",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/WordPitch3D.apk",
+      "permanent": false
+    },
+    {
+      "source": "/download/word-pitch-3d",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/WordPitch3D.apk",
+      "permanent": false
+    },
+    {
+      "source": "/wordpitch3d.apk",
+      "destination": "https://github.com/khurrammunir377-dot/tuition-manager/releases/download/v1.2.0/WordPitch3D.apk",
       "permanent": false
     }
   ],
