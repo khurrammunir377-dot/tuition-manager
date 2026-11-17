@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGlow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#1e1b4b" />
+      <stop offset="50%" stopColor="#0f172a" />
+      <stop offset="100%" stopColor="#090d16" />
+    </linearGradient>
+    <linearGradient id="goldSpark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#fef08a" />
+      <stop offset="50%" stopColor="#eab308" />
+      <stop offset="100%" stopColor="#ca8a04" />
+    </linearGradient>
+    <linearGradient id="neonCyan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#38bdf8" />
+      <stop offset="100%" stopColor="#0284c7" />
+    </linearGradient>
+    <filter id="glowEffect" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Squircle App Chassis -->
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="url(#bgGlow)" stroke="#38bdf8" stroke-width="4" stroke-opacity="0.3" />
+
+  <!-- Outer IQ Concentric Knowledge Ring -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="url(#neonCyan)" stroke-width="6" stroke-dasharray="16 12" stroke-opacity="0.4" />
+  <circle cx="256" cy="256" r="140" fill="none" stroke="#ffd54f" stroke-width="3" stroke-opacity="0.25" />
+
+  <!-- Brain Synapse Nodes -->
+  <circle cx="150" cy="180" r="10" fill="#38bdf8" filter="url(#glowEffect)" />
+  <circle cx="362" cy="180" r="10" fill="#38bdf8" filter="url(#glowEffect)" />
+  <circle cx="120" cy="280" r="8" fill="#4caf50" />
+  <circle cx="392" cy="280" r="8" fill="#4caf50" />
+  <line x1="150" y1="180" x2="220" y2="210" stroke="#38bdf8" stroke-width="3" stroke-opacity="0.5" />
+  <line x1="362" y1="180" x2="292" y2="210" stroke="#38bdf8" stroke-width="3" stroke-opacity="0.5" />
+
+  <!-- Central Electric Lightning SPARK IQ ⚡ -->
+  <polygon points="280,64 160,260 252,260 232,448 352,240 264,240" fill="url(#goldSpark)" filter="url(#glowEffect)" />
+
+  <!-- Spark Core Highlight -->
+  <polygon points="274,84 182,254 250,254 236,410 334,246 266,246" fill="#fff" opacity="0.45" />
+
+  <!-- Spark IQ Typography Emblem -->
+  <text x="256" y="480" text-anchor="middle" font-family="'Outfit', 'Segoe UI', sans-serif" font-weight="900" font-size="34" fill="#f8fafc" letter-spacing="4">
+    SPARK<tspan fill="#ffd54f"> IQ</tspan>
+  </text>
+</svg>
