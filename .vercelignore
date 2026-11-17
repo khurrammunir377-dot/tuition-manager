@@ -1,6 +1,7 @@
 *
 !index.html
+!404.html
+!version.json
+!poster_urdu.png
 !assets/**
-!landing/**
 !vercel.json
-!.gitignore
